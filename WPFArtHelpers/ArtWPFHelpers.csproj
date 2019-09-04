@@ -1,0 +1,371 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{E3ED18A9-23A1-4C16-AE22-C5942A995421}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ArtWPFHelpers</RootNamespace>
+    <AssemblyName>ArtWPFHelpers</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="Telerik.Windows.Controls">
+      <HintPath>S:\Program Files (x86)\Telerik\UI for WPF R2 2017\Binaries\WPF45\Telerik.Windows.Controls.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Windows.Controls.Input">
+      <HintPath>S:\Program Files (x86)\Telerik\UI for WPF R2 2017\Binaries\WPF45\Telerik.Windows.Controls.Input.dll</HintPath>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Converters\BooleanToStringConverter.cs" />
+    <Compile Include="Converters\BytesCountToConverter.cs" />
+    <Compile Include="Converters\ListItemToPositionConverter.cs" />
+    <Compile Include="Converters\CultureStrToFlagImageConverter.cs" />
+    <Compile Include="Converters\EnumDescriptionTypeConverter.cs" />
+    <Compile Include="Converters\InverseBooleanConverter.cs" />
+    <Compile Include="Converters\MessageTypeConverter.cs" />
+    <Compile Include="Converters\OnOffToImageConverter.cs" />
+    <Compile Include="Converters\UpperCaseConverter.cs" />
+    <Compile Include="Converters\USBDriveToImageConverter.cs" />
+    <Compile Include="Markups\EnumBindingSourceExtension.cs" />
+    <Compile Include="Markups\IconExtention.cs" />
+    <Compile Include="Models\BanchMessage.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="Localization\BaseLocalizationListener.cs" />
+    <Compile Include="Localization\BindingLocalizationConverter.cs" />
+    <Compile Include="Localization\BindingLocalizationListener.cs" />
+    <Compile Include="Localization\CultureChangedEventManager.cs" />
+    <Compile Include="Localization\ILocalizableObject.cs" />
+    <Compile Include="Localization\ILocalizationProvider.cs" />
+    <Compile Include="Localization\KeyLocalizationListener.cs" />
+    <Compile Include="Localization\LocalizationExtension.cs" />
+    <Compile Include="Localization\LocalizationManager.cs" />
+    <Compile Include="Localization\ResxLocalizationProvider.cs" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Flags\flag_afghanistan.ico" />
+    <Resource Include="Resources\Flags\flag_albania.ico" />
+    <Resource Include="Resources\Flags\flag_algeria.ico" />
+    <Resource Include="Resources\Flags\flag_american_samoa.ico" />
+    <Resource Include="Resources\Flags\flag_andorra.ico" />
+    <Resource Include="Resources\Flags\flag_angola.ico" />
+    <Resource Include="Resources\Flags\flag_anguilla.ico" />
+    <Resource Include="Resources\Flags\flag_antigua_and_barbuda.ico" />
+    <Resource Include="Resources\Flags\flag_argentina.ico" />
+    <Resource Include="Resources\Flags\flag_armenia.ico" />
+    <Resource Include="Resources\Flags\flag_aruba.ico" />
+    <Resource Include="Resources\Flags\flag_australia.ico" />
+    <Resource Include="Resources\Flags\flag_austria.ico" />
+    <Resource Include="Resources\Flags\flag_azerbaijan.ico" />
+    <Resource Include="Resources\Flags\flag_bahamas.ico" />
+    <Resource Include="Resources\Flags\flag_bahrain.ico" />
+    <Resource Include="Resources\Flags\flag_bangladesh.ico" />
+    <Resource Include="Resources\Flags\flag_barbados.ico" />
+    <Resource Include="Resources\Flags\flag_belarus.ico" />
+    <Resource Include="Resources\Flags\flag_belgium.ico" />
+    <Resource Include="Resources\Flags\flag_belize.ico" />
+    <Resource Include="Resources\Flags\flag_benin.ico" />
+    <Resource Include="Resources\Flags\flag_bermuda.ico" />
+    <Resource Include="Resources\Flags\flag_bhutan.ico" />
+    <Resource Include="Resources\Flags\flag_bolivia.ico" />
+    <Resource Include="Resources\Flags\flag_bosnia_and_herzegovina.ico" />
+    <Resource Include="Resources\Flags\flag_botswana.ico" />
+    <Resource Include="Resources\Flags\flag_brazil.ico" />
+    <Resource Include="Resources\Flags\flag_british_indian_ocean_territory.ico" />
+    <Resource Include="Resources\Flags\flag_british_virgin_islands.ico" />
+    <Resource Include="Resources\Flags\flag_brunei.ico" />
+    <Resource Include="Resources\Flags\flag_bulgaria.ico" />
+    <Resource Include="Resources\Flags\flag_burkina_faso.ico" />
+    <Resource Include="Resources\Flags\flag_burma.ico" />
+    <Resource Include="Resources\Flags\flag_burundi.ico" />
+    <Resource Include="Resources\Flags\flag_cambodia.ico" />
+    <Resource Include="Resources\Flags\flag_cameroon.ico" />
+    <Resource Include="Resources\Flags\flag_canada.ico" />
+    <Resource Include="Resources\Flags\flag_cape_verde.ico" />
+    <Resource Include="Resources\Flags\flag_cayman_islands.ico" />
+    <Resource Include="Resources\Flags\flag_central_african_republic.ico" />
+    <Resource Include="Resources\Flags\flag_chad.ico" />
+    <Resource Include="Resources\Flags\flag_checkered.ico" />
+    <Resource Include="Resources\Flags\flag_chile.ico" />
+    <Resource Include="Resources\Flags\flag_china.ico" />
+    <Resource Include="Resources\Flags\flag_colombia.ico" />
+    <Resource Include="Resources\Flags\flag_comoros.ico" />
+    <Resource Include="Resources\Flags\flag_congo_democratic_republic.ico" />
+    <Resource Include="Resources\Flags\flag_congo_republic.ico" />
+    <Resource Include="Resources\Flags\flag_cook_islands.ico" />
+    <Resource Include="Resources\Flags\flag_costa_rica.ico" />
+    <Resource Include="Resources\Flags\flag_cote_divoire.ico" />
+    <Resource Include="Resources\Flags\flag_croatia.ico" />
+    <Resource Include="Resources\Flags\flag_cuba.ico" />
+    <Resource Include="Resources\Flags\flag_cyprus.ico" />
+    <Resource Include="Resources\Flags\flag_czech_republic.ico" />
+    <Resource Include="Resources\Flags\flag_denmark.ico" />
+    <Resource Include="Resources\Flags\flag_djibouti.ico" />
+    <Resource Include="Resources\Flags\flag_dominica.ico" />
+    <Resource Include="Resources\Flags\flag_dominican_republic.ico" />
+    <Resource Include="Resources\Flags\flag_east_timor.ico" />
+    <Resource Include="Resources\Flags\flag_ecuador.ico" />
+    <Resource Include="Resources\Flags\flag_egypt.ico" />
+    <Resource Include="Resources\Flags\flag_el_salvador.ico" />
+    <Resource Include="Resources\Flags\flag_england.ico" />
+    <Resource Include="Resources\Flags\flag_equatorial_guinea.ico" />
+    <Resource Include="Resources\Flags\flag_eritrea.ico" />
+    <Resource Include="Resources\Flags\flag_estonia.ico" />
+    <Resource Include="Resources\Flags\flag_ethiopia.ico" />
+    <Resource Include="Resources\Flags\flag_eu.ico" />
+    <Resource Include="Resources\Flags\flag_faeroe_islands.ico" />
+    <Resource Include="Resources\Flags\flag_falkland_islands.ico" />
+    <Resource Include="Resources\Flags\flag_fiji.ico" />
+    <Resource Include="Resources\Flags\flag_finland.ico" />
+    <Resource Include="Resources\Flags\flag_france.ico" />
+    <Resource Include="Resources\Flags\flag_french_polynesia.ico" />
+    <Resource Include="Resources\Flags\flag_gabon.ico" />
+    <Resource Include="Resources\Flags\flag_gambia.ico" />
+    <Resource Include="Resources\Flags\flag_generic.ico" />
+    <Resource Include="Resources\Flags\flag_georgia.ico" />
+    <Resource Include="Resources\Flags\flag_germany.ico" />
+    <Resource Include="Resources\Flags\flag_ghana.ico" />
+    <Resource Include="Resources\Flags\flag_gibraltar.ico" />
+    <Resource Include="Resources\Flags\flag_greece.ico" />
+    <Resource Include="Resources\Flags\flag_greenland.ico" />
+    <Resource Include="Resources\Flags\flag_grenada.ico" />
+    <Resource Include="Resources\Flags\flag_guam.ico" />
+    <Resource Include="Resources\Flags\flag_guatemala.ico" />
+    <Resource Include="Resources\Flags\flag_guernsey.ico" />
+    <Resource Include="Resources\Flags\flag_guinea.ico" />
+    <Resource Include="Resources\Flags\flag_guinea_bissau.ico" />
+    <Resource Include="Resources\Flags\flag_guyana.ico" />
+    <Resource Include="Resources\Flags\flag_haiti.ico" />
+    <Resource Include="Resources\Flags\flag_honduras.ico" />
+    <Resource Include="Resources\Flags\flag_hong_kong.ico" />
+    <Resource Include="Resources\Flags\flag_hungary.ico" />
+    <Resource Include="Resources\Flags\flag_iceland.ico" />
+    <Resource Include="Resources\Flags\flag_india.ico" />
+    <Resource Include="Resources\Flags\flag_indonesia.ico" />
+    <Resource Include="Resources\Flags\flag_iran.ico" />
+    <Resource Include="Resources\Flags\flag_iraq.ico" />
+    <Resource Include="Resources\Flags\flag_ireland.ico" />
+    <Resource Include="Resources\Flags\flag_isle_of_man.ico" />
+    <Resource Include="Resources\Flags\flag_israel.ico" />
+    <Resource Include="Resources\Flags\flag_italy.ico" />
+    <Resource Include="Resources\Flags\flag_jamaica.ico" />
+    <Resource Include="Resources\Flags\flag_japan.ico" />
+    <Resource Include="Resources\Flags\flag_jersey.ico" />
+    <Resource Include="Resources\Flags\flag_jordan.ico" />
+    <Resource Include="Resources\Flags\flag_kazakhstan.ico" />
+    <Resource Include="Resources\Flags\flag_kenya.ico" />
+    <Resource Include="Resources\Flags\flag_kiribati.ico" />
+    <Resource Include="Resources\Flags\flag_kuwait.ico" />
+    <Resource Include="Resources\Flags\flag_kyrgyzstan.ico" />
+    <Resource Include="Resources\Flags\flag_laos.ico" />
+    <Resource Include="Resources\Flags\flag_latvia.ico" />
+    <Resource Include="Resources\Flags\flag_lebanon.ico" />
+    <Resource Include="Resources\Flags\flag_lesotho.ico" />
+    <Resource Include="Resources\Flags\flag_liberia.ico" />
+    <Resource Include="Resources\Flags\flag_libya.ico" />
+    <Resource Include="Resources\Flags\flag_liechtenstein.ico" />
+    <Resource Include="Resources\Flags\flag_lithuania.ico" />
+    <Resource Include="Resources\Flags\flag_luxembourg.ico" />
+    <Resource Include="Resources\Flags\flag_macau.ico" />
+    <Resource Include="Resources\Flags\flag_macedonia.ico" />
+    <Resource Include="Resources\Flags\flag_madagascar.ico" />
+    <Resource Include="Resources\Flags\flag_malawi.ico" />
+    <Resource Include="Resources\Flags\flag_malaysia.ico" />
+    <Resource Include="Resources\Flags\flag_maldives.ico" />
+    <Resource Include="Resources\Flags\flag_mali.ico" />
+    <Resource Include="Resources\Flags\flag_malta.ico" />
+    <Resource Include="Resources\Flags\flag_marshall_islands.ico" />
+    <Resource Include="Resources\Flags\flag_martinique.ico" />
+    <Resource Include="Resources\Flags\flag_mauritania.ico" />
+    <Resource Include="Resources\Flags\flag_mauritius.ico" />
+    <Resource Include="Resources\Flags\flag_mexico.ico" />
+    <Resource Include="Resources\Flags\flag_micronesia.ico" />
+    <Resource Include="Resources\Flags\flag_moldova.ico" />
+    <Resource Include="Resources\Flags\flag_monaco.ico" />
+    <Resource Include="Resources\Flags\flag_mongolia.ico" />
+    <Resource Include="Resources\Flags\flag_montenegro.ico" />
+    <Resource Include="Resources\Flags\flag_montserrat.ico" />
+    <Resource Include="Resources\Flags\flag_morocco.ico" />
+    <Resource Include="Resources\Flags\flag_mozambique.ico" />
+    <Resource Include="Resources\Flags\flag_namibia.ico" />
+    <Resource Include="Resources\Flags\flag_nauru.ico" />
+    <Resource Include="Resources\Flags\flag_nepal.ico" />
+    <Resource Include="Resources\Flags\flag_netherlands.ico" />
+    <Resource Include="Resources\Flags\flag_netherlands_antilles.ico" />
+    <Resource Include="Resources\Flags\flag_new_zealand.ico" />
+    <Resource Include="Resources\Flags\flag_nicaragua.ico" />
+    <Resource Include="Resources\Flags\flag_niger.ico" />
+    <Resource Include="Resources\Flags\flag_nigeria.ico" />
+    <Resource Include="Resources\Flags\flag_niue.ico" />
+    <Resource Include="Resources\Flags\flag_norfolk_island.ico" />
+    <Resource Include="Resources\Flags\flag_northern_mariana_islands.ico" />
+    <Resource Include="Resources\Flags\flag_north_korea.ico" />
+    <Resource Include="Resources\Flags\flag_norway.ico" />
+    <Resource Include="Resources\Flags\flag_oman.ico" />
+    <Resource Include="Resources\Flags\flag_pakistan.ico" />
+    <Resource Include="Resources\Flags\flag_palau.ico" />
+    <Resource Include="Resources\Flags\flag_panama.ico" />
+    <Resource Include="Resources\Flags\flag_papua_new_guinea.ico" />
+    <Resource Include="Resources\Flags\flag_paraguay.ico" />
+    <Resource Include="Resources\Flags\flag_peru.ico" />
+    <Resource Include="Resources\Flags\flag_philippines.ico" />
+    <Resource Include="Resources\Flags\flag_pirate.ico" />
+    <Resource Include="Resources\Flags\flag_pitcairn_islands.ico" />
+    <Resource Include="Resources\Flags\flag_poland.ico" />
+    <Resource Include="Resources\Flags\flag_portugal.ico" />
+    <Resource Include="Resources\Flags\flag_puerto_rico.ico" />
+    <Resource Include="Resources\Flags\flag_qatar.ico" />
+    <Resource Include="Resources\Flags\flag_rainbow.ico" />
+    <Resource Include="Resources\Flags\flag_romania.ico" />
+    <Resource Include="Resources\Flags\flag_russia.ico" />
+    <Resource Include="Resources\Flags\flag_rwanda.ico" />
+    <Resource Include="Resources\Flags\flag_saint_helena.ico" />
+    <Resource Include="Resources\Flags\flag_saint_kitts_and_nevis.ico" />
+    <Resource Include="Resources\Flags\flag_saint_lucia.ico" />
+    <Resource Include="Resources\Flags\flag_saint_pierre_and_miquelon.ico" />
+    <Resource Include="Resources\Flags\flag_saint_vincent_and_the_grenadines.ico" />
+    <Resource Include="Resources\Flags\flag_samoa.ico" />
+    <Resource Include="Resources\Flags\flag_san_marino.ico" />
+    <Resource Include="Resources\Flags\flag_sao_tome_and_principe.ico" />
+    <Resource Include="Resources\Flags\flag_saudi_arabia.ico" />
+    <Resource Include="Resources\Flags\flag_scotland.ico" />
+    <Resource Include="Resources\Flags\flag_senegal.ico" />
+    <Resource Include="Resources\Flags\flag_serbia.ico" />
+    <Resource Include="Resources\Flags\flag_seychelles.ico" />
+    <Resource Include="Resources\Flags\flag_sierra_leone.ico" />
+    <Resource Include="Resources\Flags\flag_singapore.ico" />
+    <Resource Include="Resources\Flags\flag_slovakia.ico" />
+    <Resource Include="Resources\Flags\flag_slovenia.ico" />
+    <Resource Include="Resources\Flags\flag_solomon_islands.ico" />
+    <Resource Include="Resources\Flags\flag_somalia.ico" />
+    <Resource Include="Resources\Flags\flag_south_africa.ico" />
+    <Resource Include="Resources\Flags\flag_south_georgia.ico" />
+    <Resource Include="Resources\Flags\flag_south_korea.ico" />
+    <Resource Include="Resources\Flags\flag_spain.ico" />
+    <Resource Include="Resources\Flags\flag_sri_lanka.ico" />
+    <Resource Include="Resources\Flags\flag_sudan.ico" />
+    <Resource Include="Resources\Flags\flag_suriname.ico" />
+    <Resource Include="Resources\Flags\flag_swaziland.ico" />
+    <Resource Include="Resources\Flags\flag_sweden.ico" />
+    <Resource Include="Resources\Flags\flag_switzerland.ico" />
+    <Resource Include="Resources\Flags\flag_syria.ico" />
+    <Resource Include="Resources\Flags\flag_taiwan.ico" />
+    <Resource Include="Resources\Flags\flag_tajikistan.ico" />
+    <Resource Include="Resources\Flags\flag_tanzania.ico" />
+    <Resource Include="Resources\Flags\flag_thailand.ico" />
+    <Resource Include="Resources\Flags\flag_tibet.ico" />
+    <Resource Include="Resources\Flags\flag_togo.ico" />
+    <Resource Include="Resources\Flags\flag_tonga.ico" />
+    <Resource Include="Resources\Flags\flag_trinidad_and_tobago.ico" />
+    <Resource Include="Resources\Flags\flag_tunisia.ico" />
+    <Resource Include="Resources\Flags\flag_turkey.ico" />
+    <Resource Include="Resources\Flags\flag_turkmenistan.ico" />
+    <Resource Include="Resources\Flags\flag_turks_and_caicos_islands.ico" />
+    <Resource Include="Resources\Flags\flag_tuvalu.ico" />
+    <Resource Include="Resources\Flags\flag_uganda.ico" />
+    <Resource Include="Resources\Flags\flag_ukraine.ico" />
+    <Resource Include="Resources\Flags\flag_united_arab_emirates.ico" />
+    <Resource Include="Resources\Flags\flag_united_kingdom.ico" />
+    <Resource Include="Resources\Flags\flag_uruguay.ico" />
+    <Resource Include="Resources\Flags\flag_usa.ico" />
+    <Resource Include="Resources\Flags\flag_uzbekistan.ico" />
+    <Resource Include="Resources\Flags\flag_vanuatu.ico" />
+    <Resource Include="Resources\Flags\flag_vatican_city.ico" />
+    <Resource Include="Resources\Flags\flag_venezuela.ico" />
+    <Resource Include="Resources\Flags\flag_vietnam.ico" />
+    <Resource Include="Resources\Flags\flag_virgin_islands.ico" />
+    <Resource Include="Resources\Flags\flag_wales.ico" />
+    <Resource Include="Resources\Flags\flag_wallis_and_futuna.ico" />
+    <Resource Include="Resources\Flags\flag_white.ico" />
+    <Resource Include="Resources\Flags\flag_yemen.ico" />
+    <Resource Include="Resources\Flags\flag_zambia.ico" />
+    <Resource Include="Resources\Flags\flag_zimbabwe.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\ArtechLogo01.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\bullet_triangle_green.ico" />
+    <Resource Include="Resources\check.ico" />
+    <Resource Include="Resources\error.ico" />
+    <Resource Include="Resources\info.ico" />
+    <Resource Include="Resources\warning.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\externalhdd.ico" />
+    <Resource Include="Resources\memorystick.ico" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

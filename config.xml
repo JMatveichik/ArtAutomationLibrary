@@ -1,0 +1,1659 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<?xml-stylesheet type="text/xsl" href="view_config.xsl"?>
+
+
+<!-- 
+Составление имен источников данных
+префиксы для аналоговых :
+  
+  T - температура
+  P - давление
+  G - расход
+  U - напряжение
+  I - ток
+  X - концентрация
+  A - геометрический угол (°)
+  W - мощность
+
+дискретные величины:
+    
+  SW - переключение (switch)
+  ST - состояние    (state)
+
+аналоговые величины:
+  DEF - заданный (defined)
+  GOT - измеренный 
+  CLC - вычисленная
+  
+конструктивные элементы:
+  VLV - клапан  (valve)
+  NZL - форсунка (nozzle) 
+  LMP - лампочка (lamp)
+  BTN - кнопка    (button)
+  SND - звук      (sound)
+  PLSM - плазматрон
+  RS - реактор синтеза
+  HT - нагревательный элемент
+  WL - стенка 
+
+расположение и направление:
+  IN  - входное (input);  внутренний (inner)
+  OUT - выходное (output); наружный (outer)
+
+вещества:
+  LPR - жидкий пропан-бутан
+  GPR - газообразный пропан-бутан
+  AIR - воздух
+  MIX - смесь (пропанбутан + воздух)
+  NITRO - азот 
+  WTR - вода
+режимы работы:  
+  MS- режим синеза (synthesis mode)
+  MA- режим синеза (activation mode)
+-->
+
+<NTCCPROJECT PROJECTNAME="Тельпук. Модуль #3" VERSION="2.8" MODE="RELEASE">
+
+  <PATHS SHARE="NTCC">
+    <PATH TYPE="IMAGES"  DIR="IMAGES"/>
+    <PATH TYPE="SCRIPTS" DIR="BAS"/>
+    <PATH TYPE="LOG"     DIR="LOG"/>
+    <PATH TYPE="DATA"    DIR="RESULT"/>
+    <PATH TYPE="HTML"    DIR="HTML"/>
+	<PATH TYPE="CONFIG"  DIR="CONFIG"/>
+  </PATHS>
+
+  <!-- МЕНЕДЖЕРЫ КОМАНД COM ПОРТОВ-->
+  <CMDMANAGERS>
+      <CMDMANAGER COM="3" BAUD="115200" MAXRETRIES="3"/>      
+	  <CMDMANAGER COM="1" BAUD="38400" MAXRETRIES="5" LOGDIR="LOG"/>
+  </CMDMANAGERS>
+
+  <!-- Сборщик данных интервал жизни данных 1 чаc = 3600 сек обновление данных каждые 1 сек-->
+  <DATACOLLECTOR LIVEINTERVAL="3600" UPDATEINTERVAL="1"/>
+
+  <!--Преобразователи величин-->
+  <CONVERTERS>
+
+    <CONVERTER TYPE="LINEAR" ID = "mAtoP16" MINS="4.0" MAXS="20.0" MINV="0.0" MAXV="16.0">
+      Ток (mA) в давление (атм) от 0 до 16 (для датчиков давления)
+    </CONVERTER>
+    <CONVERTER TYPE="LINEAR" ID = "mAtoP1" MINS="4.0" MAXS="20.0" MINV="0.0" MAXV="1.0">
+      Ток (mA) в давление (атм) от 0 до 1 (для датчиков давления)
+    </CONVERTER>
+    <CONVERTER TYPE="LINEAR" ID = "mAtoP2.5" MINS="4.0" MAXS="20.0" MINV="0.0" MAXV="2.5">
+      Ток (mA) в давление (атм) от 0 до 2.5 (для датчиков давления)
+    </CONVERTER>
+
+    <CONVERTER TYPE="POLY" ID = "tr" MIN="0.225814" MAX="5.0" POLYNOM="108.99;-40.857;4.6302">
+     Температура редуктора
+    </CONVERTER>
+    
+    <CONVERTER TYPE="CALC" ID = "Uacc" FORMULA="X*3.0">
+     Напряжение аккумулятора
+    </CONVERTER>
+
+    <CONVERTER TYPE="CALC" ID = "HW1" FORMULA="200*X/100">
+      Расчет высокого состояния импульса сигнала  в зависимости от мощности нагревателя
+    </CONVERTER>
+    <CONVERTER TYPE="CALC" ID = "LW1" FORMULA="200-200*X/100">
+      Расчет низкого состояния импульса сигнала  в зависимости от мощности нагревателя
+    </CONVERTER>
+    <CONVERTER TYPE="LINEAR" ID = "PSIAtoAtm" MINS="14.695949" MAXS="29.391898" MINV="1.0" MAXV="2.0">
+      PSIA -> атм (для контроллеров массовых расходов)
+    </CONVERTER>
+  </CONVERTERS >
+
+  <!-- Описание устройств -->
+  <DEVICES MODE="RELEASE">
+
+	<!--
+	<DEVICE NAME="MFCP" TYPE="FMA-2612A" GAS="C3H8" ADDRESS="1:A" TIME="1000">
+     
+	  <![CDATA[<html>
+      Устройство : <b>FMA-2612A</b><br/> 
+      Обозначение: <b>MFCP</b><br/>
+      Адрес      : <b>COM4:1</b><br/>
+      <b>Индикатор</b>
+      <ul>
+        <li>Контроллер массового расхода газов Omega Engineering FMA-2612A</li>
+        <li>Задание и измерение расхода возхдуха в реактор синтеза</li>
+        <li>Измерение реального расхода, давления и температуры контролируемого газа</li>
+      </ul>      
+      </html>
+      ]]>
+    </DEVICE>
+	-->
+	
+    <DEVICE NAME="I0" TYPE="OWEN SIM2" PORT="3" ADDRESS="1" TIME="3000" >
+      <![CDATA[<html>
+      Устройство : <b>OWEN SIM2</b><br/> 
+      Обозначение: <b>I0</b><br/>
+      Адрес      : <b>COM22:1</b><br/>
+      <b>Индикатор</b>
+      <ul>
+        <li><b>Ошибки</b><i>&nbsp;Ошибки оборудования</i></li>
+        <li><b>Режимы</b><i>&nbsp;Режимы работы установки</i></li>
+        <li><b>Значения</b><i>&nbsp;Значения переменных</i></li>
+      </ul>      
+      </html>
+      ]]>
+    </DEVICE>
+
+    <DEVICE NAME="A15" TYPE="ADAM-6018" ADDRESS="192.168.10.15" PORT="502" TIME="1000" LOG="1">
+      <![CDATA[<html>
+      Устройство : <b>ADAM-6018</b><br/> 
+      Обозначение: <b>A15</b><br/>
+      Адрес      : <b>192.168.10.15</b><br/>
+      <b>Аналоговые входы:</b>
+      <ul>
+      <li><b>AI0</b><i>&nbsp;Температура ТЭН внутреннего нагревателя реактора синтеза УНМ</i></li>
+      <li><b>AI1</b><i>&nbsp;Температура стенок внутреннего нагревателя реактора синтеза УНМ</i></li>
+      </ul>
+      <b>Дискретные выходы:</b>
+      <ul>
+      <li><b>DO0</b><i>&nbsp;Контактор внутреннего нагревателя РСУНМ</i></li>
+      <li><b>DO1</b><i>&nbsp;Клапан пропановый форсунки</i></li>
+      <li><b>DO2</b><i>&nbsp;Клапан воздушный режима активации</i></li>
+      <li><b>DO3</b><i>&nbsp;Клапан воздушный режима синтеза</i></li>
+      <li><b>DO4</b><i>&nbsp;Клапан азотный продувки реактора</i></li>
+      <li><b>DO5</b><i>&nbsp;Клапан пропановый режима активации</i></li>
+      <li><b>DO6</b><i>&nbsp;Клапан пропановый режима синтеза</i></li>
+      <li><b>DO7</b><i>&nbsp;Клапан азотный продувки тары</i></li>
+      </ul>
+      </html>
+      ]]>
+
+    </DEVICE>
+
+    <DEVICE NAME="A16"  TYPE="ADAM-6018" ADDRESS="192.168.10.16" PORT="502" TIME="1000" LOG="1">
+      <![CDATA[<html>
+      Устройство : <b>ADAM-6018</b><br/> 
+      Обозначение: <b>A16</b><br/>
+      Адрес      : <b>192.168.10.16</b><br/>
+      <b>Аналоговые входы:</b>
+      <ul>
+      <li><b>AI0</b><i>&nbsp;Температура ТЭН наружного нагревателя реактора синтеза УНМ (верхняя)</i></li>
+      <li><b>AI1</b><i>&nbsp;Температура ТЭН наружного нагревателя реактора синтеза УНМ (средняя верхняя)</i></li>
+      <li><b>AI2</b><i>&nbsp;Температура ТЭН наружного нагревателя реактора синтеза УНМ (средняя нижняя)</i></li>
+      <li><b>AI3</b><i>&nbsp;Температура ТЭН наружного нагревателя реактора синтеза УНМ (нижняя)</i></li>      
+      <li><b>AI4</b><i>&nbsp;Наружная температура реактора синтеза УНМ (верхняя)</i></li>
+      <li><b>AI5</b><i>&nbsp;Наружная температура реактора синтеза УНМ (средняя верхняя)</i></li>
+      <li><b>AI6</b><i>&nbsp;Наружная температура реактора синтеза УНМ (средняя нижняя)</i></li>
+      <li><b>AI7</b><i>&nbsp;Наружная температура реактора синтеза УНМ (нижняя)</i></li>      
+      </ul>
+      
+      <b>Дискретные выходы:</b>
+      <ul>
+      <li><b>DO0</b><i>&nbsp;Контактор наружного нагревателя РСУНМ</i></li>
+      <li><b>DO1</b><i>&nbsp;Контактор термостата</i></li>
+      <li><b>DO2</b><i>&nbsp;Клапан воздушный продувка шкафа</i></li>
+      <li><b>DO3</b><i>&nbsp;Клапан отсечной на балоне</i></li>
+      <li><b>DO4</b><i>&nbsp;Клапан отсечной редуктора</i></li>
+      <li><b>DO5</b><i>&nbsp;неиспользуется</i></li>
+      <li><b>DO6</b><i>&nbsp;неиспользуется</i></li>
+      <li><b>DO7</b><i>&nbsp;Звуковая сигнализация</i></li>
+      </ul>
+      </html>
+      ]]>
+    </DEVICE>
+
+    <DEVICE NAME="A17"  TYPE="ADAM-6066" ADDRESS="192.168.10.17" PORT="502" TIME="1000" LOG="1">
+      <![CDATA[<html>
+      Устройство : <b>ADAM-6066</b><br/> 
+      Обозначение: <b>A17</b><br/>
+      Адрес      : <b>192.168.10.17</b><br/>
+      <b>Дискретные входы:</b>
+      <ul>
+      <li><b>DI0</b><i>&nbsp;Вкл. модуля</i></li>
+      <li><b>DI1</b><i>&nbsp;Выкл. модуля</i></li>
+      <li><b>DI2</b><i>&nbsp;Аварийный стоп</i></li>
+      <li><b>DI3</b><i>&nbsp;Модуль включен</i></li>
+      <li><b>DI4</b><i>&nbsp;Внешний аварийный СТОП</i></li>
+      <li><b>DI5</b><i>&nbsp;Входное напряжение в норме</i></li>      
+      </ul>
+      <b>Дискретные выходы:</b>
+      <ul>
+      <li><b>DO0</b><i>&nbsp;Реле ИБП 24В</i></li>
+      <li><b>DO1</b><i>&nbsp;Блокировка включения модуля</i></li>
+      <li><b>DO2</b><i>&nbsp;Блокировка выключения модуля</i></li>
+      <li><b>DO3</b><i>&nbsp;Сигнальная колонна. Зеленая лампа </i></li>
+      <li><b>DO4</b><i>&nbsp;Сигнальная колонна. Желтая лампа</i></li>
+      <li><b>DO5</b><i>&nbsp;Сигнальная колонна. Красная лампа</i></li>      
+      </ul>
+      </html>
+      ]]>
+    </DEVICE>
+
+    <DEVICE NAME="A18"  TYPE="ADAM-6052" ADDRESS="192.168.10.18" PORT="502" TIME="1000" LOG="1">
+      <![CDATA[<html>
+      Устройство : <b>ADAM-6052</b><br/> 
+      Обозначение: <b>A18</b><br/>
+      Адрес      : <b>192.168.10.18</b><br/>
+      <b>Дискретные входы:</b>
+      <ul>
+      <li><b>DI0</b><i>&nbsp;Индикатор расхода пропана</i></li>
+      <li><b>DI1</b><i>&nbsp;12В норма</i></li>
+      <li><b>DI2</b><i>&nbsp;24В норма</i></li>
+      <li><b>DI3</b><i>&nbsp;реле давления воздуха в шкафу</i></li>
+      <li><b>DI4</b><i>&nbsp;Внешний аварийный СТОП</i></li>
+      <li><b>DI5</b><i>&nbsp;Входное напряжение в норме</i></li>      
+      <li><b>DI6</b><i>&nbsp;не используется</i></li>
+      <li><b>DI7</b><i>&nbsp;не используется</i></li>      
+      
+      </ul>
+      <b>Дискретные выходы:</b>
+      <ul>
+      <li><b>DO0</b><i>&nbsp;Реле наружного нагревателя РСУНМ(верхний ТЭН)</i></li>
+      <li><b>DO1</b><i>&nbsp;Реле наружного нагревателя РСУНМ (средний верхний ТЭН)</i></li>
+      <li><b>DO2</b><i>&nbsp;Реле наружного нагревателя РСУНМ (средний нижний ТЭН)</i></li>
+      <li><b>DO3</b><i>&nbsp;Реле наружного нагревателя РСУНМ (нижний ТЭН)</i></li>
+      <li><b>DO4</b><i>&nbsp;ШИМ наружного нагревателя РСУНМ (верхний ТЭН)</i></li>
+      <li><b>DO5</b><i>&nbsp;ШИМ наружного нагревателя РСУНМ (средний верхний ТЭН)</i></li>
+      <li><b>DO6</b><i>&nbsp;ШИМ наружного нагревателя РСУНМ (средний нижний ТЭН)</i></li>
+      <li><b>DO7</b><i>&nbsp;ШИМ наружного нагревателя РСУНМ (нижний ТЭН)</i></li>
+      </ul>
+      </html>
+      ]]>
+      <PULSE CHANNEL="0" MODE="HW_LW" CONV1="HW1" CONV2="LW1"/>
+      <PULSE CHANNEL="1" MODE="HW_LW" CONV1="HW1" CONV2="LW1"/>
+      <PULSE CHANNEL="2" MODE="HW_LW" CONV1="HW1" CONV2="LW1"/>
+      <PULSE CHANNEL="3" MODE="HW_LW" CONV1="HW1" CONV2="LW1"/>
+    </DEVICE>
+
+    <DEVICE NAME="A19"  TYPE="ADAM-6052" ADDRESS="192.168.10.19" PORT="502" TIME="1000" LOG="1">
+      <![CDATA[<html>
+      Устройство : <b>ADAM-6052</b><br/> 
+      Обозначение: <b>A19</b><br/>
+      Адрес      : <b>192.168.10.19</b><br/>
+      <b>Дискретные входы:</b>
+      <ul>
+      <li><b>DI0</b><i>&nbsp;Форсунка 1 ОК</i></li>
+      <li><b>DI1</b><i>&nbsp;Форсунка 2 ОК</i></li>
+      <li><b>DI2</b><i>&nbsp;Блокировка концевого выключателя двери шкафа</i></li>
+      <li><b>DI3</b><i>&nbsp;Дверь шкафа открыта</i></li>
+      <li><b>DI4</b><i>&nbsp;Пожарная сигнализация</i></li>
+      <li><b>DI5</b><i>&nbsp;Система контроля загазованности</i></li>      
+      <li><b>DI6</b><i>&nbsp;Внешний сигнал</i></li>
+      <li><b>DI7</b><i>&nbsp;не используется</i></li>      
+      
+      </ul>
+      <b>Дискретные выходы:</b>
+      <ul>
+      <li><b>DO0</b><i>&nbsp;Реле наружного нагревателя РСУНМ</i></li>
+      <li><b>DO1</b><i>&nbsp;ШИМ наружного нагревателя РСУНМ</i></li>
+      <li><b>DO2</b><i>&nbsp;Форсунка 1</i></li>
+      <li><b>DO3</b><i>&nbsp;Форсунка 2</i></li>
+      <li><b>DO4</b><i>&nbsp;Лампа &laquo;Прогрев&raquo;</i></li>
+      <li><b>DO5</b><i>&nbsp;Лампа &laquo;Активация&raquo;</i></li>
+      <li><b>DO6</b><i>&nbsp;Лампа &laquo;Синтез&raquo;</i></li>
+      <li><b>DO7</b><i>&nbsp;Лампа &laquo;Чистка&raquo;</i></li>
+      
+      </ul>
+      </html>
+      ]]>
+      <PULSE CHANNEL="0" MODE="HW_LW" CONV1="HW1" CONV2="LW1"/>
+    </DEVICE>
+
+    <DEVICE NAME="A20"  TYPE="ADAM-6052" ADDRESS="192.168.10.20" PORT="502" TIME="1000" LOG="1">
+      <![CDATA[<html>
+      Устройство : <b>ADAM-6052</b><br/> 
+      Обозначение: <b>A20</b><br/>
+      Адрес      : <b>192.168.10.20</b><br/>
+      <b>Дискретные входы:</b>
+      <ul>
+      <li><b>DI0</b><i>&nbsp;Скребок внутри</i></li>
+      <li><b>DI1</b><i>&nbsp;Скребок снаружи</i></li>
+      <li><b>DI2</b><i>&nbsp;Уплотнение отжато</i></li>
+      <li><b>DI3</b><i>&nbsp;Уплотнение зажато</i></li>
+      <li><b>DI4</b><i>&nbsp;Авария ворошителя</i></li>
+      <li><b>DI5</b><i>&nbsp;Шлюз закрыт</i></li>      
+      <li><b>DI6</b><i>&nbsp;не используется</i></li>
+      <li><b>DI7</b><i>&nbsp;не используется</i></li>      
+      
+      </ul>
+      <b>Дискретные выходы:</b>
+      <ul>
+      <li><b>DO0</b><i>&nbsp;Контактор ворошителя</i></li>
+      <li><b>DO1</b><i>&nbsp;Распределитель пневмоцилиндра скребка</i></li>
+      <li><b>DO2</b><i>&nbsp;Клапан пневмовибратора</i></li>
+      <li><b>DO3</b><i>&nbsp;Распределитель пневмоцилиндра уплотнения</i></li>
+      <li><b>DO4</b><i>&nbsp;Привод шлюза</i></li>
+      <li><b>DO5</b><i>&nbsp;Лампа &laquo;Заменить балон&raquo;</i></li>
+      <li><b>DO6</b><i>&nbsp;не используется</i></li>
+      <li><b>DO7</b><i>&nbsp;не используется</i></li>
+      
+      </ul>
+      </html>
+      ]]>
+    </DEVICE>
+
+    <DEVICE NAME="A21"  TYPE="ADAM-6017" ADDRESS="192.168.10.21" PORT="502" TIME="1000" LOG="1">
+      <![CDATA[<html>
+      Устройство : <b>ADAM-6017</b><br/> 
+      Обозначение: <b>A21</b><br/>
+      Адрес      : <b>192.168.10.21</b><br/>
+      <b>Аналоговые входы:</b>
+      <ul>
+      <li><b>AI0</b><i>&nbsp;Датчик давления в реакторе</i></li>
+      <li><b>AI1</b><i>&nbsp;Датчик температуры газового редуктора</i></li>
+      <li><b>AI2</b><i>&nbsp;Датчик уровня готового продукта</i></li>
+      <li><b>AI3</b><i>&nbsp;Датчик давление сжатого воздуха</i></li>
+      <li><b>AI4</b><i>&nbsp;не используется</i></li>
+      <li><b>AI5</b><i>&nbsp;Датчик давление азота</i></li>
+      <li><b>AI6</b><i>&nbsp;Датчик сжиженого пропан-бутана</i></li>
+      <li><b>AI7</b><i>&nbsp;Датчик газообразного пропан-бутана</i></li>      
+      </ul>      
+      </html>
+      ]]>
+    </DEVICE>
+
+    <DEVICE NAME="A0" TYPE="VIRTUAL" CHANNELSAI="64" CHANNELSAO="64" CHANNELSDI="64" CHANNELSDO="64">
+      <![CDATA[<html>
+      Устройство : <b>ARTPte Virtual</b><br/> 
+      Обозначение: <b>A0</b><br/>
+      Адрес      : <b></b><br/>      
+      <ul>
+      <li><b>Аналоговые входы - 64</b></li>
+      <li><b>Аналоговые выходы - 64</b></li>
+      <li><b>Дискретные входы - 64</b></li>
+      <li><b>Дискретные выходы - 64</b></li>      
+      </ul>
+      </html>      
+      ]]>
+		<AO WIRE="0" MIN="0" MAX="900.0"/>
+		<AO WIRE="1" MIN="0" MAX="900.0"/>
+		<AO WIRE="2" MIN="0" MAX="900.0"/>
+		<AO WIRE="3" MIN="0" MAX="900.0"/>
+		<AO WIRE="4" MIN="0" MAX="900.0"/>
+		<AO WIRE="5" MIN="0" MAX="90.0"/>
+		<AO WIRE="6" MIN="0" MAX="90.0"/>
+		<AO WIRE="7" MIN="0" MAX="90.0"/>
+		<AO WIRE="8" MIN="0" MAX="90.0"/>
+		<AO WIRE="9" MIN="0" MAX="90.0"/>
+
+		<AO WIRE="10" MIN="0" MAX="800.0"/>
+		<AO WIRE="11" MIN="1" MAX="120.0"/>
+		<AO WIRE="12" MIN="1" MAX="15.0"/>
+		<AO WIRE="13" MIN="1" MAX="30.0"/>
+		<AO WIRE="14" MIN="1" MAX="60.0"/>
+		<AO WIRE="15" MIN="1" MAX="20.0"/>
+		<AO WIRE="16" MIN="0" MAX="4.0"/>
+		<AO WIRE="17" MIN="0" MAX="4.0"/>
+		<AO WIRE="18" MIN="0" MAX="4.0"/>
+		
+		<AO WIRE="19" MIN="0" MAX="10.0"/>
+        
+        
+        <AO WIRE="20" MIN="0" MAX="120.0"/>
+        <AO WIRE="21" MIN="0" MAX="15.0"/>
+        <AO WIRE="22" MIN="0" MAX="30.0"/>
+        <AO WIRE="23" MIN="0" MAX="60.0"/>
+        <AO WIRE="24" MIN="1" MAX="10.0"/>
+        <AO WIRE="25" MIN="0" MAX="10.0"/>
+		<AO WIRE="26" MIN="0" MAX="800.0"/>
+      
+    </DEVICE>
+  </DEVICES>
+
+  <DEVICES MODE="DEBUG">
+  
+  <!--
+   <DEVICE NAME="A2000"  TYPE="ADAM-6052" ADDRESS="10.0.0.1" PORT="502" TIME="1000">
+      <![CDATA[<html>
+      Устройство : <b>ADAM-6052</b><br/> 
+      Обозначение: <b>A20</b><br/>
+      Адрес      : <b>192.168.10.20</b><br/>
+      <b>Дискретные входы:</b>
+      <ul>
+      <li><b>DI0</b><i>&nbsp;Скребок внутри</i></li>
+      <li><b>DI1</b><i>&nbsp;Скребок снаружи</i></li>
+      <li><b>DI2</b><i>&nbsp;Уплотнение отжато</i></li>
+      <li><b>DI3</b><i>&nbsp;Уплотнение зажато</i></li>
+      <li><b>DI4</b><i>&nbsp;Авария ворошителя</i></li>
+      <li><b>DI5</b><i>&nbsp;Шлюз закрыт</i></li>      
+      <li><b>DI6</b><i>&nbsp;не используется</i></li>
+      <li><b>DI7</b><i>&nbsp;не используется</i></li>      
+      
+      </ul>
+      <b>Дискретные выходы:</b>
+      <ul>
+      <li><b>DO0</b><i>&nbsp;Контактор ворошителя</i></li>
+      <li><b>DO1</b><i>&nbsp;Распределитель пневмоцилиндра скребка</i></li>
+      <li><b>DO2</b><i>&nbsp;Клапан пневмовибратора</i></li>
+      <li><b>DO3</b><i>&nbsp;Распределитель пневмоцилиндра уплотнения</i></li>
+      <li><b>DO4</b><i>&nbsp;Привод шлюза</i></li>
+      <li><b>DO5</b><i>&nbsp;Лампа &laquo;Заменить балон&raquo;</i></li>
+      <li><b>DO6</b><i>&nbsp;не используется</i></li>
+      <li><b>DO7</b><i>&nbsp;не используется</i></li>
+      
+      </ul>
+      </html>
+      ]]>
+    </DEVICE>
+    -->
+    
+    <DEVICE NAME="I0" TYPE="VIRTUAL" PORT="22" CHANNELSAO="6" CHANNELSDO="6" ADDRESS="1" TIME="5000" >
+      <![CDATA[<html>
+      Устройство : <b>OWEN SIM2</b><br/> 
+      Обозначение: <b>I0</b><br/>
+      Адрес      : <b>COM22:1</b><br/>
+      <b>Индикатор</b>
+      <ul>
+        <li><b>Ошибки</b><i>&nbsp;Ошибки оборудования</i></li>
+        <li><b>Режимы</b><i>&nbsp;Режимы работы установки</i></li>
+        <li><b>Значения</b><i>&nbsp;Значения переменных</i></li>
+      </ul>      
+      </html>
+      ]]>     
+      
+    </DEVICE>
+
+    <DEVICE NAME="A15" TYPE="VIRTUAL" CHANNELSAI="8" CHANNELSDO="24" SIGNALSSRC="A15.SIGNALS.csv" TIME="250">
+      <![CDATA[<html>
+      Устройство : <b>ADAM-6018</b><br/> 
+      Обозначение: <b>A15</b><br/>
+      Адрес      : <b>192.168.10.15</b><br/>
+      <b>Аналоговые входы:</b>
+      <ul>
+      <li><b>AI0</b><i>&nbsp;Температура ТЭН внутреннего нагревателя реактора синтеза УНМ</i></li>
+      <li><b>AI1</b><i>&nbsp;Температура стенок внутреннего нагревателя реактора синтеза УНМ</i></li>
+      </ul>
+      <b>Дискретные выходы:</b>
+      <ul>
+      <li><b>DO0</b><i>&nbsp;Контактор внутреннего нагревателя РСУНМ</i></li>
+      <li><b>DO1</b><i>&nbsp;Клапан пропановый форсунки</i></li>
+      <li><b>DO2</b><i>&nbsp;Клапан воздушный режима активации</i></li>
+      <li><b>DO3</b><i>&nbsp;Клапан воздушный режима синтеза</i></li>
+      <li><b>DO4</b><i>&nbsp;Клапан азотный продувки реактора</i></li>
+      <li><b>DO5</b><i>&nbsp;Клапан пропановый режима активации</i></li>
+      <li><b>DO6</b><i>&nbsp;Клапан пропановый режима синтеза</i></li>
+      <li><b>DO7</b><i>&nbsp;Клапан азотный продувки тары</i></li>
+      </ul>
+      </html>
+      ]]>
+    </DEVICE>
+
+    <DEVICE NAME="A16" TYPE="VIRTUAL" CHANNELSAI="8" CHANNELSDO="24" SIGNALSSRC="A16.SIGNALS.csv" TIME="250">
+      <![CDATA[<html>
+      Устройство : <b>ADAM-6018</b><br/> 
+      Обозначение: <b>A16</b><br/>
+      Адрес      : <b>192.168.10.16</b><br/>
+      <b>Аналоговые входы:</b>
+      <ul>
+      <li><b>AI0</b><i>&nbsp;Температура ТЭН наружного нагревателя реактора синтеза УНМ (верхняя)</i></li>
+      <li><b>AI1</b><i>&nbsp;Температура ТЭН наружного нагревателя реактора синтеза УНМ (средняя верхняя)</i></li>
+      <li><b>AI2</b><i>&nbsp;Температура ТЭН наружного нагревателя реактора синтеза УНМ (средняя нижняя)</i></li>
+      <li><b>AI3</b><i>&nbsp;Температура ТЭН наружного нагревателя реактора синтеза УНМ (нижняя)</i></li>      
+      <li><b>AI4</b><i>&nbsp;Наружная температура реактора синтеза УНМ (верхняя)</i></li>
+      <li><b>AI5</b><i>&nbsp;Наружная температура реактора синтеза УНМ (средняя верхняя)</i></li>
+      <li><b>AI6</b><i>&nbsp;Наружная температура реактора синтеза УНМ (средняя нижняя)</i></li>
+      <li><b>AI7</b><i>&nbsp;Наружная температура реактора синтеза УНМ (нижняя)</i></li>      
+      </ul>
+      
+      <b>Дискретные выходы:</b>
+      <ul>
+      <li><b>DO0</b><i>&nbsp;Контактор наружного нагревателя РСУНМ</i></li>
+      <li><b>DO1</b><i>&nbsp;Контактор термостата</i></li>
+      <li><b>DO2</b><i>&nbsp;Клапан воздушный продувка шкафа</i></li>
+      <li><b>DO3</b><i>&nbsp;Клапан отсечной на балоне</i></li>
+      <li><b>DO4</b><i>&nbsp;Клапан отсечной редуктора</i></li>
+      <li><b>DO5</b><i>&nbsp;неиспользуется</i></li>
+      <li><b>DO6</b><i>&nbsp;неиспользуется</i></li>
+      <li><b>DO7</b><i>&nbsp;Звуковая сигнализация</i></li>
+      </ul>
+      </html>
+      ]]>
+    </DEVICE>
+
+    <DEVICE NAME="A17" TYPE="VIRTUAL" CHANNELSDI="6" CHANNELSDO="6" CHANNELSAI="6" SIGNALSSRC="A17.SIGNALS.csv">
+      <![CDATA[<html>
+      Устройство : <b>ADAM-6066</b><br/> 
+      Обозначение: <b>A17</b><br/>
+      Адрес      : <b>192.168.10.17</b><br/>
+      <b>Дискретные входы:</b>
+      <ul>
+      <li><b>DI0</b><i>&nbsp;Вкл. модуля</i></li>
+      <li><b>DI1</b><i>&nbsp;Выкл. модуля</i></li>
+      <li><b>DI2</b><i>&nbsp;Аварийный стоп</i></li>
+      <li><b>DI3</b><i>&nbsp;Модуль включен</i></li>
+      <li><b>DI4</b><i>&nbsp;Внешний аварийный СТОП</i></li>
+      <li><b>DI5</b><i>&nbsp;Входное напряжение в норме</i></li>      
+      </ul>
+      <b>Дискретные выходы:</b>
+      <ul>
+      <li><b>DO0</b><i>&nbsp;Реле ИБП 24В</i></li>
+      <li><b>DO1</b><i>&nbsp;Блокировка включения модуля</i></li>
+      <li><b>DO2</b><i>&nbsp;Блокировка выключения модуля</i></li>
+      <li><b>DO3</b><i>&nbsp;Сигнальная колонна. Зеленая лампа </i></li>
+      <li><b>DO4</b><i>&nbsp;Сигнальная колонна. Желтая лампа</i></li>
+      <li><b>DO5</b><i>&nbsp;Сигнальная колонна. Красная лампа</i></li>      
+      </ul>
+      </html>
+      ]]>
+    </DEVICE>
+
+    <DEVICE NAME="A18"  TYPE="VIRTUAL" CHANNELSDI="8" CHANNELSDO="8" CHANNELSAO="8">
+      <![CDATA[<html>
+      Устройство : <b>ADAM-6052</b><br/> 
+      Обозначение: <b>A18</b><br/>
+      Адрес      : <b>192.168.10.18</b><br/>
+      <b>Дискретные входы:</b>
+      <ul>
+      <li><b>DI0</b><i>&nbsp;Индикатор расхода пропана</i></li>
+      <li><b>DI1</b><i>&nbsp;12В норма</i></li>
+      <li><b>DI2</b><i>&nbsp;24В норма</i></li>
+      <li><b>DI3</b><i>&nbsp;реле давления воздуха в шкафу</i></li>
+      <li><b>DI4</b><i>&nbsp;Внешний аварийный СТОП</i></li>
+      <li><b>DI5</b><i>&nbsp;Входное напряжение в норме</i></li>      
+      <li><b>DI6</b><i>&nbsp;не используется</i></li>
+      <li><b>DI7</b><i>&nbsp;не используется</i></li>      
+      
+      </ul>
+      <b>Дискретные выходы:</b>
+      <ul>
+      <li><b>DO0</b><i>&nbsp;Реле наружного нагревателя РСУНМ(верхний ТЭН)</i></li>
+      <li><b>DO1</b><i>&nbsp;Реле наружного нагревателя РСУНМ (средний верхний ТЭН)</i></li>
+      <li><b>DO2</b><i>&nbsp;Реле наружного нагревателя РСУНМ (средний нижний ТЭН)</i></li>
+      <li><b>DO3</b><i>&nbsp;Реле наружного нагревателя РСУНМ (нижний ТЭН)</i></li>
+      <li><b>DO4</b><i>&nbsp;ШИМ наружного нагревателя РСУНМ (верхний ТЭН)</i></li>
+      <li><b>DO5</b><i>&nbsp;ШИМ наружного нагревателя РСУНМ (средний верхний ТЭН)</i></li>
+      <li><b>DO6</b><i>&nbsp;ШИМ наружного нагревателя РСУНМ (средний нижний ТЭН)</i></li>
+      <li><b>DO7</b><i>&nbsp;ШИМ наружного нагревателя РСУНМ (нижний ТЭН)</i></li>
+      </ul>
+      </html>
+      ]]>
+
+      <PULSE CHANNEL="4" MODE="HW_LW" CONV1="HW1" CONV2="LW1"/>
+      <PULSE CHANNEL="5" MODE="HW_LW" CONV1="HW1" CONV2="LW1"/>
+      <PULSE CHANNEL="6" MODE="HW_LW" CONV1="HW1" CONV2="LW1"/>
+      <PULSE CHANNEL="7" MODE="HW_LW" CONV1="HW1" CONV2="LW1"/>
+    </DEVICE>
+
+    <DEVICE NAME="A19" TYPE="VIRTUAL" CHANNELSDI="8" CHANNELSDO="8" CHANNELSAO="8">
+      <![CDATA[<html>
+      Устройство : <b>ADAM-6052</b><br/> 
+      Обозначение: <b>A19</b><br/>
+      Адрес      : <b>192.168.10.19</b><br/>
+      <b>Дискретные входы:</b>
+      <ul>
+      <li><b>DI0</b><i>&nbsp;Форсунка 1 ОК</i></li>
+      <li><b>DI1</b><i>&nbsp;Форсунка 2 ОК</i></li>
+      <li><b>DI2</b><i>&nbsp;Блокировка концевого выключателя двери шкафа</i></li>
+      <li><b>DI3</b><i>&nbsp;Дверь шкафа открыта</i></li>
+      <li><b>DI4</b><i>&nbsp;Пожарная сигнализация</i></li>
+      <li><b>DI5</b><i>&nbsp;Система контроля загазованности</i></li>      
+      <li><b>DI6</b><i>&nbsp;Внешний сигнал</i></li>
+      <li><b>DI7</b><i>&nbsp;не используется</i></li>      
+      
+      </ul>
+      <b>Дискретные выходы:</b>
+      <ul>
+      <li><b>DO0</b><i>&nbsp;Реле наружного нагревателя РСУНМ</i></li>
+      <li><b>DO1</b><i>&nbsp;ШИМ наружного нагревателя РСУНМ</i></li>
+      <li><b>DO2</b><i>&nbsp;Форсунка 1</i></li>
+      <li><b>DO3</b><i>&nbsp;Форсунка 2</i></li>
+      <li><b>DO4</b><i>&nbsp;Лампа &laquo;Прогрев&raquo;</i></li>
+      <li><b>DO5</b><i>&nbsp;Лампа &laquo;Активация&raquo;</i></li>
+      <li><b>DO6</b><i>&nbsp;Лампа &laquo;Синтез&raquo;</i></li>
+      <li><b>DO7</b><i>&nbsp;Лампа &laquo;Чистка&raquo;</i></li>
+      
+      </ul>
+      </html>
+      ]]>
+      <PULSE CHANNEL="1" MODE="HW_LW" CONV1="HW1" CONV2="LW1"/>
+    </DEVICE>
+
+    <DEVICE NAME="A20"  TYPE="VIRTUAL" CHANNELSDI="8" CHANNELSDO="24">
+      <![CDATA[<html>
+      Устройство : <b>ADAM-6052</b><br/> 
+      Обозначение: <b>A20</b><br/>
+      Адрес      : <b>192.168.10.20</b><br/>
+      <b>Дискретные входы:</b>
+      <ul>
+      <li><b>DI0</b><i>&nbsp;Скребок внутри</i></li>
+      <li><b>DI1</b><i>&nbsp;Скребок снаружи</i></li>
+      <li><b>DI2</b><i>&nbsp;Уплотнение отжато</i></li>
+      <li><b>DI3</b><i>&nbsp;Уплотнение зажато</i></li>
+      <li><b>DI4</b><i>&nbsp;Авария ворошителя</i></li>
+      <li><b>DI5</b><i>&nbsp;Шлюз закрыт</i></li>      
+      <li><b>DI6</b><i>&nbsp;не используется</i></li>
+      <li><b>DI7</b><i>&nbsp;не используется</i></li>      
+      
+      </ul>
+      <b>Дискретные выходы:</b>
+      <ul>
+      <li><b>DO0</b><i>&nbsp;Контактор ворошителя</i></li>
+      <li><b>DO1</b><i>&nbsp;Распределитель пневмоцилиндра скребка</i></li>
+      <li><b>DO2</b><i>&nbsp;Клапан пневмовибратора</i></li>
+      <li><b>DO3</b><i>&nbsp;Распределитель пневмоцилиндра уплотнения</i></li>
+      <li><b>DO4</b><i>&nbsp;Привод шлюза</i></li>
+      <li><b>DO5</b><i>&nbsp;Лампа &laquo;Заменить балон&raquo;</i></li>
+      <li><b>DO6</b><i>&nbsp;не используется</i></li>
+      <li><b>DO7</b><i>&nbsp;не используется</i></li>
+      
+      </ul>
+      </html>
+      ]]>
+    </DEVICE>
+
+    <DEVICE NAME="A21" TYPE="VIRTUAL" CHANNELSAI="8" CHANNELSDO="8">
+      <![CDATA[<html>
+      Устройство : <b>ADAM-6017</b><br/> 
+      Обозначение: <b>A21</b><br/>
+      Адрес      : <b>192.168.10.21</b><br/>
+      <b>Аналоговые входы:</b>
+      <ul>
+      <li><b>AI0</b><i>&nbsp;Датчик давления в реакторе</i></li>
+      <li><b>AI1</b><i>&nbsp;Датчик температуры газового редуктора</i></li>
+      <li><b>AI2</b><i>&nbsp;Датчик уровня готового продукта</i></li>
+      <li><b>AI4</b><i>&nbsp;Датчик давление сжатого воздуха</i></li>
+      <li><b>AI4</b><i>&nbsp;не используется</i></li>
+      <li><b>AI5</b><i>&nbsp;Датчик давление азота</i></li>
+      <li><b>AI6</b><i>&nbsp;Датчик сжиженого пропан-бутана</i></li>
+      <li><b>AI7</b><i>&nbsp;Датчик газообразного пропан-бутана</i></li>      
+      </ul>      
+      </html>
+      ]]>
+      <AI WIRE="1" MIN="4.0" MAX="0.25"/>
+    </DEVICE>
+
+    <DEVICE NAME="A0" TYPE="VIRTUAL" CHANNELSAI="64" CHANNELSAO="64" CHANNELSDI="64" CHANNELSDO="64">
+    
+      <![CDATA[<html>
+      Устройство : <b>ARTPte Virtual</b><br/> 
+      Обозначение: <b>A0</b><br/>
+      Адрес      : <b></b><br/>      
+      <ul>
+      <li><b>Аналоговые входы - 64</b></li>
+      <li><b>Аналоговые выходы - 64</b></li>
+      <li><b>Дискретные входы - 64</b></li>
+      <li><b>Дискретные выходы - 64</b></li>      
+      </ul>
+      </html>
+      ]]>
+		<AO WIRE="0" MIN="0" MAX="900.0"/>
+		<AO WIRE="1" MIN="0" MAX="900.0"/>
+		<AO WIRE="2" MIN="0" MAX="900.0"/>
+		<AO WIRE="3" MIN="0" MAX="900.0"/>
+		<AO WIRE="4" MIN="0" MAX="900.0"/>
+		<AO WIRE="5" MIN="0" MAX="90.0"/>
+		<AO WIRE="6" MIN="0" MAX="90.0"/>
+		<AO WIRE="7" MIN="0" MAX="90.0"/>
+		<AO WIRE="8" MIN="0" MAX="90.0"/>
+		<AO WIRE="9" MIN="0" MAX="90.0"/>
+
+		<AO WIRE="10" MIN="0" MAX="800.0"/>
+		<AO WIRE="11" MIN="1" MAX="120.0"/>
+		<AO WIRE="12" MIN="1" MAX="15.0"/>
+		<AO WIRE="13" MIN="1" MAX="30.0"/>
+		<AO WIRE="14" MIN="1" MAX="60.0"/>
+		<AO WIRE="15" MIN="1" MAX="10.0"/>
+		<AO WIRE="16" MIN="0" MAX="4.0"/>
+		<AO WIRE="17" MIN="0" MAX="4.0"/>
+		<AO WIRE="18" MIN="0" MAX="4.0"/>
+
+		<AO WIRE="19" MIN="0" MAX="10.0"/>
+		
+        <AO WIRE="20" MIN="0" MAX="120.0"/>
+        <AO WIRE="21" MIN="0" MAX="15.0"/>
+        <AO WIRE="22" MIN="0" MAX="30.0"/>
+        <AO WIRE="23" MIN="0" MAX="60.0"/>
+        
+    </DEVICE>
+    
+  </DEVICES>
+
+  <!--РЕГИСТРАЦИЯ ИСТОЧНИКОВ ДАННЫХ -->
+
+  <DATASOURCES >
+       
+    <!--OWEN SIM2-->
+    <!--АНАЛОГОВЫЕ ВЫХОДЫ-->
+    <DS TYPE="AnalogOutputDataPoint" DEV="I0" NAME="MODE" WIRE="0" DEFAULT="-1" COLOR="0xCC9900">
+      Текущий режим
+    </DS>
+    <DS TYPE="AnalogOutputDataPoint" DEV="I0" NAME="WARN" WIRE="1" DEFAULT="-1" COLOR="0xCC9900">
+      Предупреждения
+    </DS>
+    <DS TYPE="AnalogOutputDataPoint" DEV="I0" NAME="ERR"  WIRE="2" DEFAULT="-1" COLOR="0xCC9900">
+      Ошибки
+    </DS>
+    <DS TYPE="AnalogOutputDataPoint" DEV="I0" NAME="VAL"  WIRE="3" DEFAULT="0.0" COLOR="0xCC9900">
+      Произвольный параметр
+    </DS>
+    
+    <!--ЦИФРОВЫЕ ВЫХОДЫ-->
+    <DS TYPE="DiscreteOutputDataPoint" DEV="I0" NAME="SW_SHOW_MODE" WIRE="0" >
+      Отображать текущий режим
+    </DS>
+    <DS TYPE="DiscreteOutputDataPoint" DEV="I0" NAME="SW_SHOW_WARN" WIRE="1" >
+      Отображать предупреждения
+    </DS>
+    <DS TYPE="DiscreteOutputDataPoint" DEV="I0" NAME="SW_SHOW_ERR"  WIRE="2" >
+      Отображать ошибки
+    </DS>
+    <DS TYPE="DiscreteOutputDataPoint" DEV="I0" NAME="SW_SHOW_VAL"  WIRE="3">
+      Отображать произвольный параметр
+    </DS>
+    <DS TYPE="DiscreteOutputDataPoint" DEV="I0" NAME="SW_BLINK"     WIRE="4">
+      Режим мигания
+    </DS>
+    
+    
+    <!--ADAM-6018 A15-->
+    <!--АНАЛОГОВЫЕ ВХОДЫ-->
+    <DS TYPE="AnalogInputDataPoint" DEV="A15" NAME="T_IN_HT" WIRE="0" COLOR="0x0000FF" FMT="%-3.0f" UNITS="°C" MINV="0.0" MAXV="1000.0">
+      Температура ТЭН внутреннего нагревателя реактора синтеза УНМ
+    </DS>
+    <DS TYPE="AnalogInputDataPoint" DEV="A15" NAME="T_IN_WLS" WIRE="1" COLOR="0xFF00CC" FMT="%-3.0f" UNITS="°C" MINV="0.0" MAXV="1000.0">
+      Температура стенок внутреннего нагревателя реактора синтеза УНМ
+    </DS>
+
+    <!--ДИСКРЕТНЫЕ ВЫХОДЫ-->
+    <DS TYPE ="DiscreteOutputDataPoint" DEV ="A15"  NAME="SW_IN_HT_CONT"  WIRE="8" COLOR="0xCC9900">
+      Контактор внутреннего нагревателя
+    </DS>
+    <DS TYPE ="DiscreteOutputDataPoint" DEV ="A15"  NAME="SW_VLV_PR_NZL"  WIRE="1" COLOR="0xCC9900">
+      Клапан пропановый форсунки
+    </DS>
+    <DS TYPE ="DiscreteOutputDataPoint" DEV ="A15"  NAME="SW_VLV_AIR_MA"  WIRE="2" COLOR="0xCC9900">
+      Клапан воздушный режима активации
+    </DS>
+    <DS TYPE ="DiscreteOutputDataPoint" DEV ="A15"  NAME="SW_VLV_AIR_MS"  WIRE="3" COLOR="0xCC9900">
+      Клапан воздушный режима синтеза
+    </DS>
+    <DS TYPE ="DiscreteOutputDataPoint" DEV ="A15"  NAME="SW_VLV_NITRO_RS"  WIRE="4" COLOR="0xCC9900"  INVERT="1">
+      Клапан азотный продувки реактора
+    </DS>
+    <DS TYPE ="DiscreteOutputDataPoint" DEV ="A15"  NAME="SW_VLV_PR_MA"  WIRE="5" COLOR="0xCC9900">
+      Клапан пропановый режима активации
+    </DS>
+    <DS TYPE ="DiscreteOutputDataPoint" DEV ="A15"  NAME="SW_VLV_PR_MS"  WIRE="6" COLOR="0xCC9900">
+      Клапан пропановый режима синтеза
+    </DS>
+    <DS TYPE ="DiscreteOutputDataPoint" DEV ="A15"  NAME="SW_VLV_NITRO_BLK"  WIRE="7" COLOR="0xCC9900"  INVERT="1">
+      Клапан азотный продувки тары
+    </DS>
+
+    <!--ADAM-6018 A16-->
+    <!--АНАЛОГОВЫЕ ВХОДЫ-->
+    <DS TYPE="AnalogInputDataPoint" DEV ="A16" NAME="T_OUT_HT1" WIRE="0" COLOR="0x0000FF" FMT="%-3.0f" UNITS="°C" MINV="0.0" MAXV="1000.0">
+      Температура ТЭН HH (верхняя)
+    </DS>
+    <DS TYPE="AnalogInputDataPoint" DEV ="A16" NAME="T_OUT_HT2" WIRE="1" COLOR="0x0000FF" FMT="%-3.0f" UNITS="°C" MINV="0.0" MAXV="1000.0">
+      Температура ТЭН HH (средняя верхняя)
+    </DS>
+    <DS TYPE="AnalogInputDataPoint" DEV ="A16" NAME="T_OUT_HT3" WIRE="2" COLOR="0x0000FF" FMT="%-3.0f" UNITS="°C" MINV="0.0" MAXV="1000.0">
+      Температура ТЭН HH (средняя нижняя)
+    </DS>
+    <DS TYPE="AnalogInputDataPoint" DEV ="A16" NAME="T_OUT_HT4" WIRE="3" COLOR="0x0000FF" FMT="%-3.0f" UNITS="°C" MINV="0.0" MAXV="1000.0">
+      Температура ТЭН HH (нижняя)
+    </DS>
+    <DS TYPE="AnalogInputDataPoint" DEV ="A16" NAME="T_OUT_RS1" WIRE="4" COLOR="0xFF00CC" FMT="%-3.0f" UNITS="°C" MINV="0.0" MAXV="1000.0">
+      Температура стенки реактора (верхняя)
+    </DS>
+    <DS TYPE="AnalogInputDataPoint" DEV ="A16" NAME="T_OUT_RS2" WIRE="5" COLOR="0xFF00CC" FMT="%-3.0f" UNITS="°C" MINV="0.0" MAXV="1000.0">
+      Температура стенки реактора (средняя верхняя)
+    </DS>
+    <DS TYPE="AnalogInputDataPoint" DEV ="A16" NAME="T_OUT_RS3" WIRE="6" COLOR="0xFF00CC" FMT="%-3.0f" UNITS="°C" MINV="0.0" MAXV="1000.0">
+      Температура стенки реактора (средняя нижняя)
+    </DS>
+    <DS TYPE="AnalogInputDataPoint" DEV ="A16" NAME="T_OUT_RS4" WIRE="7" COLOR="0xFF00CC" FMT="%-3.0f" UNITS="°C" MINV="0.0" MAXV="1000.0">
+      Температура стенки реактора (нижняя)
+    </DS>
+	
+    <!--ДИСКРЕТНЫЕ ВЫХОДЫ-->
+    <DS TYPE="DiscreteOutputDataPoint" DEV ="A16" NAME="SW_OUT_HT_CONT" WIRE="8" COLOR="0x000000">
+      Контактор наружного нагревателя 
+    </DS>
+    <DS TYPE="DiscreteOutputDataPoint" DEV ="A16" NAME="SW_THERM" WIRE="1" COLOR="0x000000">
+      Контактор термостата
+    </DS>
+    <DS TYPE="DiscreteOutputDataPoint" DEV ="A16" NAME="SW_VLV_NITRO_SCRAPER" WIRE="2" COLOR="0x000000">
+      Клапан воздушный продувка шкафа
+    </DS>
+    <DS TYPE="DiscreteOutputDataPoint" DEV ="A16" NAME="SW_VLV_BULK" WIRE="3" COLOR="0x000000">
+      Клапан отсечной на балоне
+    </DS>
+    <DS TYPE="DiscreteOutputDataPoint" DEV ="A16" NAME="SW_VLV_REDUCTOR" WIRE="4" COLOR="0x000000">
+      Клапан отсечной редуктора
+    </DS>
+    <!--
+    <DS TYPE="DiscreteOutputDataPoint" DEV ="A16" NAME="" WIRE="5" COLOR="0x000000" FMT="%-3.0f" UNITS="">неиспользуется</DS>
+    <DS TYPE="DiscreteOutputDataPoint" DEV ="A16" NAME="" WIRE="6" COLOR="0x000000" FMT="%-3.0f" UNITS="">неиспользуется</DS>
+    -->
+    <DS TYPE="DiscreteOutputDataPoint" DEV ="A16" NAME="SW_SND" WIRE="7" COLOR="0x000000">
+      Звуковая сигнализация
+    </DS>
+
+    <!--ADAM-6066 A17-->
+    <!--АНАЛОГОВЫЕ ВХОДЫ-->
+    <DS TYPE="DiscreteInputDataPoint" DEV="A17" NAME="ST_ON"  WIRE="0" COLOR="0x000000">Вкл. модуля</DS>
+    <DS TYPE="DiscreteInputDataPoint" DEV="A17" NAME="ST_OFF" WIRE="1" COLOR="0x000000">Выкл. модуля</DS>
+    <DS TYPE="AnalogInputDataPoint" DEV="A17" NAME="COUNT_ON" WIRE="0" COLOR="0x000000">Счетчик нажатий кнопки Пуск</DS>
+    <DS TYPE="AnalogInputDataPoint" DEV="A17" NAME="COUNT_OFF" WIRE="1" COLOR="0x000000">Счетчик нажатий кнопки Стоп</DS>
+    
+    <DS TYPE="DiscreteInputDataPoint" DEV="A17" NAME="ST_IN_STOP"      WIRE="2" COLOR="0x000000" INVERT="1">Аварийный стоп</DS>
+    <DS TYPE="DiscreteInputDataPoint" DEV="A17" NAME="ST_MOD_ON"       WIRE="3" COLOR="0x000000" INVERT="1">Модуль включен</DS>
+    <DS TYPE="DiscreteInputDataPoint" DEV="A17" NAME="ST_OUT_STOP"     WIRE="4" COLOR="0x000000">Внешний аварийный СТОП</DS>
+    <DS TYPE="DiscreteInputDataPoint" DEV="A17" NAME="ST_IN_POWER_OK"  WIRE="5" COLOR="0x000000">Входное напряжение в норме</DS>
+
+    <!--ДИСКРЕТНЫЕ ВЫХОДЫ-->
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A17" NAME="SW_UPS" WIRE="0" COLOR="0x000000">Реле ИБП 24В</DS>
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A17" NAME="SW_BLOCK_ON" WIRE="1" COLOR="0x000000">Блокировка включения модуля</DS>
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A17" NAME="SW_BLOCK_OFF" WIRE="2" COLOR="0x000000">Блокировка выключения модуля</DS>
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A17" NAME="SW_LMP_GREEN" WIRE="3" COLOR="0x000000">Сигнальная колонна «Зеленая лампа» </DS>
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A17" NAME="SW_LMP_YELLOW" WIRE="4" COLOR="0x000000">Сигнальная колонна «Желтая лампа»</DS>
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A17" NAME="SW_LMP_RED" WIRE="5" COLOR="0x000000">Сигнальная колонна «Красная лампа»</DS>
+
+    <!--ADAM-6052 A18-->
+    <!--ДИСКРЕТНЫЕ ВХОДЫ-->
+    <DS TYPE="DiscreteInputDataPoint" DEV="A18" NAME="ST_PR_G"  WIRE="0" COLOR="0x000000">Индикатор расхода пропана</DS>
+    <DS TYPE="DiscreteInputDataPoint" DEV="A18" NAME="ST_12V"   WIRE="1" COLOR="0x000000">12В норма</DS>
+    <DS TYPE="DiscreteInputDataPoint" DEV="A18" NAME="ST_24V"   WIRE="2" COLOR="0x000000">24В норма</DS>
+    <DS TYPE="DiscreteInputDataPoint" DEV="A18" NAME="ST_P_BOX" WIRE="3" COLOR="0x000000">Реле давления воздуха в шкафу</DS>
+    <!--
+    <DS TYPE="DiscreteInputDataPoint" DEV="A18" NAME="" WIRE="4" COLOR="0xFF0000">не используется</DS>
+    <DS TYPE="DiscreteInputDataPoint" DEV="A18" NAME="" WIRE="5" COLOR="0x000000">не используется</DS>    
+    <DS TYPE="DiscreteInputDataPoint" DEV="A18" NAME="" WIRE="6" COLOR="0x000000">не используется</DS>
+    <DS TYPE="DiscreteInputDataPoint" DEV="A18" NAME="" WIRE="7" COLOR="0x000000">не используется</DS>      
+    -->
+    <!--ДИСКРЕТНЫЕ ВЫХОДЫ-->
+   <!-- <DS TYPE="DiscreteOutputDataPoint" DEV="A18" NAME="SW_OUT_H1" WIRE="4" COLOR="0x000000">Реле наружного нагревателя (верхний ТЭН)</DS>
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A18" NAME="SW_OUT_H2" WIRE="5" COLOR="0x000000">Реле наружного нагревателя (средний верхний ТЭН)</DS>
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A18" NAME="SW_OUT_H3" WIRE="6" COLOR="0x000000">Реле наружного нагревателя  (средний нижний ТЭН)</DS>
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A18" NAME="SW_OUT_H4" WIRE="7" COLOR="0x000000">Реле наружного нагревателя (нижний ТЭН)</DS>
+    -->
+    
+    <DS TYPE="AnalogOutputDataPoint" DEV="A18" NAME="W_OUT_H1" WIRE="0"  COLOR="0x5C3616" FMT="%-3.0f" UNITS="%" RESTORED="1">
+        Мощность наружного нагревателя (верхний ТЭН)
+    </DS>
+    <DS TYPE="AnalogOutputDataPoint" DEV="A18" NAME="W_OUT_H2" WIRE="1"  COLOR="0x926036" FMT="%-3.0f" UNITS="%" RESTORED="1">
+        Мощность наружного нагревателя (средний верхний ТЭН)
+    </DS>
+    <DS TYPE="AnalogOutputDataPoint" DEV="A18" NAME="W_OUT_H3" WIRE="2"  COLOR="0x343696" FMT="%-3.0f" UNITS="%" RESTORED="1">
+        Мощность наружного нагревателя (средний нижний ТЭН)
+    </DS>
+    <DS TYPE="AnalogOutputDataPoint" DEV="A18" NAME="W_OUT_H4" WIRE="3"  COLOR="0x3C9376" FMT="%-3.0f" UNITS="%" RESTORED="1">
+        Мощность наружного нагревателя (нижний ТЭН)
+    </DS>
+
+    <!--ADAM-6052 A19-->
+    <!--АНАЛОГОВЫЕ ВХОДЫ-->
+    <DS TYPE="DiscreteInputDataPoint" DEV="A19" NAME="ST_NZL1" WIRE="0" COLOR="0x000000">Форсунка 1 ОК</DS>
+    <DS TYPE="DiscreteInputDataPoint" DEV="A19" NAME="ST_NZL2" WIRE="1" COLOR="0x000000">Форсунка 2 ОК</DS>
+    <DS TYPE="DiscreteInputDataPoint" DEV="A19" NAME="ST_SERVICE_LOCK" WIRE="2" TOSTR="Рабочий;Обслуживание" COLOR="0x000000">
+        Замок сервисного обслуживания
+    </DS>
+    <DS TYPE="DiscreteInputDataPoint" DEV="A19" NAME="ST_BOX_DOOR"   TOSTR="Закрыта;Открыта" WIRE="3" COLOR="0x000000">
+        Состояние двери шкафа
+    </DS>
+    <DS TYPE="DiscreteInputDataPoint" DEV="A19" NAME="ST_FIRE_ALARM"   WIRE="4" COLOR="0x000000">Пожарная сигнализация</DS>
+    <DS TYPE="DiscreteInputDataPoint" DEV="A19" NAME="ST_GAS_ALARM"    WIRE="5" COLOR="0x000000">Система контроля загазованности</DS>
+    <DS TYPE="AnalogInputDataPoint" DEV="A19" NAME="ST_OUTER_SIGNAL" WIRE="6" COLOR="0x000000">Внешний сигнал</DS>
+    <!--
+    <DS TYPE="DiscreteInputDataPoint" DEV="A19" NAME="" WIRE="7" COLOR="0x000000" FMT="%-3.0f" UNITS="">не используется</DS>
+    -->
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A19" NAME="SW_IN_H" WIRE="1" COLOR="0x000000">Реле внутреннего нагревателя</DS>
+    <DS TYPE="AnalogOutputDataPoint" DEV="A19" NAME="W_IN_H"  WIRE="0" COLOR="0xCC9900" FMT="%-3.0f" UNITS="%" RESTORED="1">Мощность внутреннего нагревателя</DS>
+    <DS TYPE="AnalogOutputDataPoint" DEV="A19" NAME="G_NZL1" WIRE="2" COLOR="0x000000" FMT="%-3.0f" UNITS="м3/ч">Форсунка 1</DS>
+    <DS TYPE="AnalogOutputDataPoint" DEV="A19" NAME="G_NZL2" WIRE="3" COLOR="0x000000" FMT="%-3.0f" UNITS="м3/ч">Форсунка 2</DS>
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A19" NAME="SW_LMP_MH" WIRE="4" COLOR="0x000000">Лампа «Прогрев»</DS>
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A19" NAME="SW_LMP_MA" WIRE="5" COLOR="0x000000">Лампа «Активация»</DS>
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A19" NAME="SW_LMP_MS" WIRE="6" COLOR="0x000000">Лампа «Синтез»</DS>
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A19" NAME="SW_LMP_MC" WIRE="7" COLOR="0x000000">Лампа «Чистка»</DS>
+
+    <!--ADAM-6052 A20-->
+    <!--ДИСКРЕТНЫЕ ВХОДЫ-->
+    <DS TYPE="DiscreteInputDataPoint" DEV="A20" NAME="ST_POS_TOP"    WIRE="1" COLOR="0x000000"  TOSTR=" ;Верхнее">Скребок в верхнем положении</DS>
+    <DS TYPE="DiscreteInputDataPoint" DEV="A20" NAME="ST_POS_BOTTOM" WIRE="0" COLOR="0x000000"  TOSTR=" ;Нижнее">Скребок в нижнем положении</DS>
+	<DS TYPE="DiscreteInputDataPoint" DEV="A20" NAME="ST_SEAL"       WIRE="2" COLOR="0x000000"  TOSTR="Зажато;Отжато">Уплотнение зажато</DS>
+    
+    <DS TYPE="DiscreteInputDataPoint" DEV="A20" NAME="ST_GRIND_ALARM" WIRE="4" COLOR="0x000000" INVERT="1">Авария ворошителя</DS>
+    <DS TYPE="DiscreteInputDataPoint" DEV="A20" NAME="ST_UGATE" WIRE="5" COLOR="0x000000" TOSTR="Открыт;Закрыт">Шлюз закрыт</DS>
+    <!--
+      <DS TYPE="DiscreteInputDataPoint" DEV="A20" NAME="" WIRE="6" COLOR="0x000000" FMT="%-3.0f" UNITS="">не используется</DS>
+      <DS TYPE="DiscreteInputDataPoint" DEV="A20" NAME="" WIRE="7" COLOR="0x000000" FMT="%-3.0f" UNITS="">не используется</DS>
+    -->
+    <!--ДИСКРЕТНЫЕ ВЫХОДЫ-->
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A20" NAME="SW_GRIND" WIRE="0" COLOR="0x000000" TOSTR="Выкл.;Вкл.">Контактор ворошителя</DS>
+	<!--<DS TYPE="DiscreteOutputDataPoint" DEV="A20" NAME="SW_CLEAN" WIRE="1" COLOR="0x808000" TOSTR="Выкл.;Вкл.">Распределитель пневмоцилиндра скребка</DS>-->
+    <DS TYPE="AND" NAME="ST_GRIND" WIRE="4" COLOR="0x000000" TOSTR="Норма;Авария">
+		Авария ворошителя
+		<ITEM DSID="SW_GRIND"/>
+		<ITEM DSID="ST_GRIND_ALARM"/>
+	</DS>
+	
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A20" NAME="SW_SCRAPER_BURN" WIRE="9"   COLOR="0x000000">Флаг отжига скребка</DS>
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A20" NAME="SW_CLEAN"   WIRE="10"  COLOR="0x808000" TOSTR="Выкл.;Вкл.">Распределитель пневмоцилиндра скребка</DS>
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A20" NAME="SW_VIBRO" WIRE="2" COLOR="0x000000" TOSTR="Выкл.;Вкл.">Клапан пневмовибратора</DS>
+	<DS TYPE="AND"  NAME="ST_CLEAN" TOSTR="Вверх;Вниз">
+		Состояние клапана пневмоцилиндра
+		<ITEM DSID="SW_CLEAN"/>
+	</DS>
+	<DS TYPE="AND"  NAME="ST_VIBRO" TOSTR="Выкл.;Вкл.">
+		Состояние клапана пневмовибратора
+		<ITEM DSID="SW_VIBRO"/>
+	</DS>
+	
+	
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A20" NAME="SW_SEAL"  WIRE="3" COLOR="0x000000" TOSTR="Зажато;Отжато">Распределитель пневмоцилиндра уплотнения</DS>
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A20" NAME="SW_UGATE" WIRE="8" COLOR="0x008000" TOSTR="Выкл.;Вкл.">Привод шлюза</DS>	
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A20" NAME="SW_CHANGE" WIRE="5" COLOR="0x000000" TOSTR="Норма;Заменить">Лампа «Заменить балон»</DS>
+    <!--
+      <DS TYPE="DiscreteOutputDataPoint" DEV="A20" NAME="" WIRE="6" COLOR="0x000000" FMT="%-3.0f" UNITS="">не используется</DS>
+      <DS TYPE="DiscreteOutputDataPoint" DEV="A20" NAME="" WIRE="7" COLOR="0x000000" FMT="%-3.0f" UNITS="">не используется</DS>
+      -->
+
+    <!--ADAM-6017 A21-->
+    <!--АНАЛОГОВЫЕ ВХОДЫ-->
+    <DS TYPE="AnalogInputDataPoint" DEV="A21" NAME="P_RS" WIRE="0" COLOR="0xFF0080" FMT="%-3.2f" UNITS="атм">
+      Датчик давления в реакторе
+      <CONVERT CONVID="mAtoP1"/>
+    </DS>
+    <DS TYPE="AnalogInputDataPoint" DEV="A21" NAME="T_REDUCT" WIRE="1" MINV="4.0" MAXV="0.225814" COLOR="0x0F0060" FMT="%-3.1f" UNITS="°С">
+      Датчик температуры газового редуктора
+      <CONVERT CONVID="tr"/>
+    </DS>
+	
+    <DS TYPE="AnalogInputDataPoint" DEV="A21" NAME="L_CNM" WIRE="2" COLOR="0x000000" FMT="%-3.0f" UNITS="">Датчик уровня готового продукта</DS>
+    <DS TYPE="AnalogInputDataPoint" DEV="A21" NAME="U_ACC" WIRE="3" COLOR="0x008020" FMT="%-3.0f" UNITS="В">
+        <CONVERT CONVID="Uacc"/>
+        Остаточное напряжение аккумулятора ИБП
+    </DS>
+    <DS TYPE="LEVEL" NAME="ST_UACC"  DSID="U_ACC"  GROWTH="0" COLOR="0x008020" LVL="23.5">        
+    </DS>
+    
+    
+    <DS TYPE="AnalogInputDataPoint" DEV="A21" NAME="P_AIR" WIRE="4" COLOR="0xF08000" FMT="%-3.1f" UNITS="атм" MINV="4.0" MAXV="14.0">
+      Датчик давление сжатого воздуха
+      <CONVERT CONVID="mAtoP16"/>      
+    </DS>    
+    <DS TYPE="AnalogInputDataPoint" DEV="A21" NAME="P_NITRO" WIRE="5" COLOR="0x303030" FMT="%-3.1f" UNITS="атм" MINV="4.0" MAXV="14.0">
+      Датчик давление азота
+      <CONVERT CONVID="mAtoP16"/>
+    </DS>
+    <!--
+    <DS TYPE="AnalogInputDataPoint" DEV="A21" NAME="P_LPR" WIRE="6" COLOR="0x000000" FMT="%-3.1f" UNITS="атм">Датчик сжиженого пропан-бутана</DS>
+    -->
+    <DS TYPE="AnalogInputDataPoint" DEV="A21" NAME="P_GPR" WIRE="7" COLOR="0x0020F0" FMT="%-3.2f" UNITS="атм" MINV="4.0" MAXV="13.6">
+      Датчик газообразного пропан-бутана
+      <CONVERT CONVID="mAtoP2.5"/>
+    </DS>
+
+
+    
+    <!--СОСТАВНЫЕ ПЕРЕМЕННЫЕ-->
+    <DS TYPE="LEVEL" NAME="ST_W_IN_H"   DSID="W_IN_H"   COLOR="0x000000" LVL="0">Включен ШИМ ВН</DS>
+    <DS TYPE="LEVEL" NAME="ST_W_OUT_H1" DSID="W_OUT_H1" COLOR="0xFF0000" LVL="0">Включен ШИМ НН (верхний ТЭН)</DS>
+    <DS TYPE="LEVEL" NAME="ST_W_OUT_H2" DSID="W_OUT_H2" COLOR="0xFF0000" LVL="0">Включен ШИМ НН (средний верхний ТЭН)</DS>
+    <DS TYPE="LEVEL" NAME="ST_W_OUT_H3" DSID="W_OUT_H3" COLOR="0xFF0000" LVL="0">Включен ШИМ НН (средний нижний ТЭН)</DS>
+    <DS TYPE="LEVEL" NAME="ST_W_OUT_H4" DSID="W_OUT_H4" COLOR="0xFF0000" LVL="0">Включен ШИМ НН (нижний ТЭН)</DS>
+    
+
+    
+    <DS TYPE="AND" NAME="ST_IN_HT" COLOR="0x000000">
+      Состояние внутреннего нагревателя
+      <ITEM DSID="SW_IN_HT_CONT"/>
+      <ITEM DSID="ST_W_IN_H"/>
+    </DS>
+    
+    <DS TYPE="AND" NAME="ST_OUT_H1" COLOR="0x000000">
+      Состояние наружного нагревателя (верхний ТЭН)
+      <ITEM DSID="SW_OUT_HT_CONT"/>
+      <ITEM DSID="ST_W_OUT_H1"/>      
+    </DS>
+    <DS TYPE="AND" NAME="ST_OUT_H2" COLOR="0x000000">
+      Состояние наружного нагревателя (средний верхний ТЭН)
+      <ITEM DSID="SW_OUT_HT_CONT"/>
+      <ITEM DSID="ST_W_OUT_H2"/>
+    </DS>
+    <DS TYPE="AND" NAME="ST_OUT_H3" COLOR="0x000000">
+      Состояние наружного нагревателя (среднеий нижний ТЭН)
+      <ITEM DSID="SW_OUT_HT_CONT"/>
+      <ITEM DSID="ST_W_OUT_H3"/>      
+    </DS>
+
+    <DS TYPE="AND" NAME="ST_OUT_H4" COLOR="0x000000">
+      Состояние наружного нагревателя (нижний ТЭН)
+      <ITEM DSID="SW_OUT_HT_CONT"/>
+      <ITEM DSID="ST_W_OUT_H4"/>
+    </DS>
+    
+    
+    <!--ВНУТРЕННИЕ ПЕРЕМЕННЫЕ-->
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_SYS_READY"      WIRE="0">Флаг готовности системы</DS>
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_STOP_HCONTROL"  WIRE="1">Прервать цикл контроля температур нагревательных элементов </DS>
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_SCR_PRESTART"   WIRE="2">Флаг скрипта предзапуска</DS>
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_SCR_HCONTROL"   WIRE="3">Флаг скрипта контроля температур нагревательных элементов</DS>
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_SCR_PREHEAT"    WIRE="4">Флаг скрипта предварительного разогрева</DS>
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_SCR_PREHEATOXI" WIRE="5">Флаг скрипта предварительного разогрева до температуры окисления</DS>
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_SCR_OXIDIZE"    WIRE="6">Флаг скрипта окисления</DS>
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_SCR_NITRO"      WIRE="7">Флаг скрипта продувки азотом</DS>
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_SCR_RESTORE"    WIRE="8">Флаг востановления поверхности</DS>
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_SCR_SYNTHESIS"  WIRE="9">Флаг скрипта синтеза УНМ</DS>
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_SCR_CLEAN"      WIRE="10">Флаг скрипта очистки реактора</DS>
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_SCR_STOP"       WIRE="11">Флаг скрипта остановки</DS>
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_SCR_WORK"       WIRE="12">Флаг работы основного алгоритма работы</DS>
+	<DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_SCR_GREENLAMP"  WIRE="13">Флаг скрипта контроля зеленой лампы</DS>
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_SCR_YELLOWLAMP" WIRE="14">Флаг скрипта контроля желтой лампы</DS>
+	<DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_SCR_REDLAMP"    WIRE="15">Флаг скрипта контроля красной лампы</DS>
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_SCR_SDLISTEN"   WIRE="16">Флаг скрипта контроля завершения работы системы</DS>
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_SCR_PAUSELISTEN"  WIRE="17">Флаг скрипта контроля паузы</DS>
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_SCR_SOUND"      WIRE="18">Флаг скрипта контроля сирены</DS>
+	<DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_SCR_THERMOSTAT" WIRE="19">Флаг скрипта контроля термостата</DS> 
+	
+	<DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_AUTO_PRESTART"   WIRE="33">Автоматический флаг скрипта предзапуска</DS>
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_AUTO_HCONTROL"   WIRE="34">Автоматический флаг скрипта контроля температур нагревательных элементов</DS>
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_AUTO_PREHEAT"    WIRE="35">Автоматический флаг скрипта предварительного разогрева</DS>
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_AUTO_PREHEATOXI" WIRE="36">Автоматический флаг скрипта предварительного разогрева до температуры окисления</DS>
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_AUTO_OXIDIZE"    WIRE="37">Автоматический флаг скрипта окисления</DS>
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_AUTO_NITRO"      WIRE="38">Автоматический флаг скрипта продувки азотом</DS>
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_AUTO_RESTORE"    WIRE="39">Автоматический флаг востановления поверхности</DS>
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_AUTO_SYNTHESIS"  WIRE="40">Автоматический флаг скрипта синтеза УНМ</DS>
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_AUTO_CLEAN"      WIRE="41">Автоматический флаг скрипта очистки реактора</DS>
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_AUTO_STOP"       WIRE="42">Автоматический флаг скрипта остановки</DS>
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_AUTO_WORK"       WIRE="43">Автоматический флаг работы основного алгоритма работы</DS>
+	<DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_AUTO_GREENLAMP"  WIRE="44">Автоматический флаг скрипта контроля зеленой лампы</DS>
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_AUTO_YELLOWLAMP" WIRE="45">Автоматический флаг скрипта контроля желтой лампы</DS>
+	<DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_AUTO_REDLAMP"    WIRE="46">Автоматический флаг скрипта контроля красной лампы</DS>
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_AUTO_SDLISTEN"   WIRE="47">Автоматический флаг скрипта контроля завершения работы системы</DS>
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_AUTO_PAUSELISTEN"  WIRE="48">Автоматический флаг скрипта контроля паузы</DS>
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_AUTO_SOUND"      WIRE="49">Автоматический флаг скрипта контроля сирены</DS>
+	<DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_AUTO_THERMOSTAT" WIRE="50">Автоматический флаг скрипта контроля термостата</DS>
+	<DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_AUTO_SFIRING"      WIRE="51">Автоматический флаг скрипта отжига скребка</DS>
+	<DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_SCR_SLEEP"      WIRE="52">Флаг скрипта режима ожидания</DS>
+	<DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_AUTO_SLEEP"      WIRE="53">Автоматический флаг скрипта режима ожидания</DS>
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_REQUEST_TO_STOP" WIRE="54">Сигнал полного останова</DS>    
+	
+	<DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_SCR_NITRO2"      WIRE="26">Флаг скрипта продувки азотом</DS>
+	<DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_AUTO_NITRO2"     WIRE="27">Флаг скрипта продувки азотом</DS>
+	
+	<DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_BLINK_G"     WIRE="20">Режим мигания зеленой лампой</DS>
+	<DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_ST_G"        WIRE="21">Состояние зеленой лампы</DS>
+	
+	<DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_BLINK_Y"     WIRE="22">Режим мигания желтой  лампой</DS>
+	<DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_ST_Y"        WIRE="23">Состояние желтой лампы</DS>
+	
+	<DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_BLINK_R"     WIRE="24">Режим мигания красной лампой</DS>
+	<DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_ST_R"        WIRE="25">Состояние красной лампы</DS>
+	
+	<DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_NITRO01"     WIRE="26">Продувка перед восстановлением</DS>
+	<DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_NITRO02"     WIRE="27">Продувка перед выгрузкой</DS>
+	    
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_SYSTEM_SHUTDOWN"   WIRE="30">Завершение работы системы</DS>
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_PAUSE"             WIRE="31">Пауза</DS>
+    
+    	
+	<DS TYPE="AnalogOutputDataPoint" DEV="A0" NAME="T_SET_IN_H"    WIRE="0" COLOR="0x50B000" UNITS="°C" FMT="%3.0f" DEFAULT="20">Заданная температура ВН</DS>
+    <DS TYPE="AnalogOutputDataPoint" DEV="A0" NAME="T_SET_OUT_H1"  WIRE="1" COLOR="0x50B000" UNITS="°C" FMT="%3.0f" DEFAULT="20">Заданная температура ВН (верхний ТЭН)</DS>
+    <DS TYPE="AnalogOutputDataPoint" DEV="A0" NAME="T_SET_OUT_H2"  WIRE="2" COLOR="0x50B000" UNITS="°C" FMT="%3.0f" DEFAULT="20">Заданная температура ВН (средний верхний ТЭН)</DS>
+    <DS TYPE="AnalogOutputDataPoint" DEV="A0" NAME="T_SET_OUT_H3"  WIRE="3" COLOR="0x50B000" UNITS="°C" FMT="%3.0f" DEFAULT="20">Заданная температура ВН (средний нижний ТЭН)</DS>
+    <DS TYPE="AnalogOutputDataPoint" DEV="A0" NAME="T_SET_OUT_H4"  WIRE="4" COLOR="0x50B000" UNITS="°C" FMT="%3.0f" DEFAULT="20">Заданная температура ВН (нижний ТЭН)</DS>
+
+    <DS TYPE="AnalogOutputDataPoint" DEV="A0" NAME="W_SET_IN_H"    WIRE="5" COLOR="0x669900" UNITS="%" FMT="%3.0f">Заданная мощность ВН </DS>
+    <DS TYPE="AnalogOutputDataPoint" DEV="A0" NAME="W_SET_OUT_H1"  WIRE="6" COLOR="0x669900" UNITS="%" FMT="%3.0f">Заданная мощность НН (верхний ТЭН)</DS>
+    <DS TYPE="AnalogOutputDataPoint" DEV="A0" NAME="W_SET_OUT_H2"  WIRE="7" COLOR="0x669900" UNITS="%" FMT="%3.0f">Заданная мощность НН (средний верхний ТЭН)</DS>
+    <DS TYPE="AnalogOutputDataPoint" DEV="A0" NAME="W_SET_OUT_H3"  WIRE="8" COLOR="0x669900" UNITS="%" FMT="%3.0f">Заданная мощность НН (средний нижний ТЭН)</DS>
+    <DS TYPE="AnalogOutputDataPoint" DEV="A0" NAME="W_SET_OUT_H4"  WIRE="9" COLOR="0x669900" UNITS="%" FMT="%3.0f">Заданная мощность НН (нижний ТЭН)</DS>
+
+    <DS TYPE="AnalogOutputDataPoint" DEV="A0" NAME="T_CUR_MIN"  WIRE="10" MINV="0" MAXV="1000" DEFAULT="10" COLOR="0xFF0000" UNITS="°C" FMT="%3.0f">
+      Текущая минимальная температура разогрева, °С
+    </DS>
+    <DS TYPE="AnalogOutputDataPoint" DEV="A0" NAME="T_CUR_MAX"  WIRE="26" MINV="0" MAXV="1000" DEFAULT="20" COLOR="0x660066" UNITS="°C" FMT="%3.0f">
+      Текущая максимальная температура разогрева, °С
+    </DS>
+	
+	<DS TYPE="AnalogOutputDataPoint" DEV="A0" NAME="DUR_OXI"  WIRE="11"   DEFAULT="40" COLOR="0x3C9376" UNITS="мин" FMT="%3.0f">
+      Время окисления поверхности на большом расходе, мин
+    </DS>
+	<DS TYPE="AnalogOutputDataPoint" DEV="A0" NAME="DUR_NITRO"  WIRE="12" DEFAULT="5" COLOR="0x3C9376" UNITS="мин" FMT="%3.0f">
+      Время продувки реактора азотом, мин
+    </DS>
+	<DS TYPE="AnalogOutputDataPoint" DEV="A0" NAME="DUR_REST"  WIRE="13" DEFAULT="20" COLOR="0x3C9376" UNITS="мин" FMT="%3.0f">
+      Время восстановления поверхности, мин
+    </DS>    
+	<DS TYPE="AnalogOutputDataPoint" DEV="A0" NAME="DUR_SYNT"  WIRE="14" DEFAULT="40" COLOR="0x3C9376" UNITS="мин" FMT="%3.0f">
+      Время синтеза УНМ, мин
+    </DS>
+    
+    
+    <DS TYPE="AnalogOutputDataPoint" DEV="A0" NAME="DUR_OXI2"    WIRE="20" DEFAULT="60" COLOR="0x3C9376" UNITS="мин" FMT="%3.0f">
+      Время окисления поверхности на малом расходе, мин
+    </DS>
+    <!--
+	<DS TYPE="AnalogOutputDataPoint" DEV="A0" NAME="DUR_NITRO_LEFT"  WIRE="21" RESTORE="1" COLOR="0x3C9376" UNITS="мин" FMT="%3.0f">
+      Оставшееся время продувки реактора азотом, мин
+    </DS>
+	<DS TYPE="AnalogOutputDataPoint" DEV="A0" NAME="DUR_REST_LEFT"   WIRE="22" RESTORE="1" COLOR="0x3C9376" UNITS="мин" FMT="%3.0f">
+      Оставшееся время восстановления поверхности, мин
+    </DS>    
+	<DS TYPE="AnalogOutputDataPoint" DEV="A0" NAME="DUR_SYNT_LEFT"   WIRE="23" RESTORE="1" COLOR="0x3C9376" UNITS="мин" FMT="%3.0f">
+      Оставшееся время синтеза УНМ, мин
+    </DS>
+    -->
+    
+	<DS TYPE="AnalogOutputDataPoint" DEV="A0" NAME="CLEAN_PASS_COUNT"  WIRE="15" DEFAULT="10" COLOR="0x3C9376" UNITS="" FMT="%3.0f">
+      Число проходов скребка за цикл чистки 
+    </DS>
+    
+	<DS TYPE="AnalogOutputDataPoint" DEV="A0" NAME="GL_BLINK_SPEED"  WIRE="16"  DEFAULT="2" COLOR="0x3C9376" UNITS="" FMT="%3.0f">
+      Скорость мерцания зеленой лампы
+    </DS>
+	<DS TYPE="AnalogOutputDataPoint" DEV="A0" NAME="YL_BLINK_SPEED"  WIRE="17"  DEFAULT="2" COLOR="0x3C9376" UNITS="" FMT="%3.0f">
+      Скорость мерцания желтой лампы
+    </DS>
+	<DS TYPE="AnalogOutputDataPoint" DEV="A0" NAME="RL_BLINK_SPEED"  WIRE="18" DEFAULT="2" COLOR="0x3C9376" UNITS="" FMT="%3.0f">
+      Скорость мерцания красной лампы
+    </DS>
+	<DS TYPE="AnalogOutputDataPoint" DEV="A0" NAME="CLEAN_PASS_CUR"  WIRE="19" COLOR="0x3C9376" UNITS="" FMT="%3.0f">
+      Текущий проход скребка за цикл чистки 
+    </DS>
+	<DS TYPE="AnalogOutputDataPoint" DEV="A0" NAME="LONG_PRESS_TIME"  WIRE="24" DEFAULT="2.5" COLOR="0x3C9376" UNITS="сек" FMT="%3.0f">
+      Продолжительность длинного нажатия кнопки, сек
+    </DS>
+    
+    <DS TYPE="AnalogOutputDataPoint" DEV="A0" NAME="MELODY"  WIRE="25" DEFAULT="0" COLOR="0x3C9376">
+      Номер мелодии звука
+    </DS>
+	
+    <!--СОСТАВНЫЕ ПЕРЕМЕННЫЕ-->
+    <DS TYPE="LEVEL" NAME="ST_TH0" DSID="T_IN_HT"    LVL="T_SET_IN_H"   >Температура ВН не превышает заданную</DS>
+    <DS TYPE="LEVEL" NAME="ST_TH1" DSID="T_OUT_HT1"  LVL="T_SET_OUT_H1" >Температура НН (верхний ТЭН) не превышает заданную</DS>
+    <DS TYPE="LEVEL" NAME="ST_TH2" DSID="T_OUT_HT2"  LVL="T_SET_OUT_H2" >Температура НН (средний верхний ТЭН)</DS>
+    <DS TYPE="LEVEL" NAME="ST_TH3" DSID="T_OUT_HT3"  LVL="T_SET_OUT_H3" >Температура НН (средний нижний ТЭН) не превышает заданную</DS>
+    <DS TYPE="LEVEL" NAME="ST_TH4" DSID="T_OUT_HT4"  LVL="T_SET_OUT_H4" >Температура НН (нижний ТЭН) не превышает заданную</DS>
+
+    <!--ПЕРЕМЕННЫЕ ПРОГРЕВА-->
+    <DS TYPE="LEVEL" NAME="ST_TW0" DSID="T_IN_WLS"   LVL="T_CUR_MAX">Температура внутренней стенки реактора достигла контрольной</DS>
+    <DS TYPE="LEVEL" NAME="ST_TW1" DSID="T_OUT_RS1"  LVL="T_CUR_MAX">Температура наружной стенки (верхняя) достигла контрольной</DS>
+    <DS TYPE="LEVEL" NAME="ST_TW2" DSID="T_OUT_RS2"  LVL="T_CUR_MAX">Температура наружной стенки (средняя верхняя) достигла контрольной</DS>
+    <DS TYPE="LEVEL" NAME="ST_TW3" DSID="T_OUT_RS3"  LVL="T_CUR_MAX">Температура наружной стенки (средняя нижняя) достигла контрольной</DS>
+    <DS TYPE="LEVEL" NAME="ST_TW4" DSID="T_OUT_RS4"  LVL="T_CUR_MAX">Температура наружной стенки (нижняя) достигла контрольной</DS>
+    
+    <DS TYPE="LEVEL" NAME="ST_TWGM0" DSID="T_IN_WLS"   LVL="T_CUR_MIN">Температура внутренней стенки реактора больше минимальной контрольной</DS>
+    <DS TYPE="LEVEL" NAME="ST_TWGM1" DSID="T_OUT_RS1"  LVL="T_CUR_MIN">Температура наружной стенки (верхняя) больше минимальной контрольной</DS>
+    <DS TYPE="LEVEL" NAME="ST_TWGM2" DSID="T_OUT_RS2"  LVL="T_CUR_MIN">Температура наружной стенки (средняя верхняя) больше минимальной контрольной</DS>
+    <DS TYPE="LEVEL" NAME="ST_TWGM3" DSID="T_OUT_RS3"  LVL="T_CUR_MIN">Температура наружной стенки (средняя нижняя) больше минимальной контрольной</DS>
+    <DS TYPE="LEVEL" NAME="ST_TWGM4" DSID="T_OUT_RS4"  LVL="T_CUR_MIN">Температура наружной стенки (нижняя) достигла больше минимальной контрольной</DS>
+    
+    <DS TYPE="RANGE" NAME="ST_TWR0" DSID="T_IN_WLS"   LOLVL="T_CUR_MIN" HILVL="T_CUR_MAX" >Температура внутренней стенки реактора в заданном диапазоне</DS>
+    <DS TYPE="RANGE" NAME="ST_TWR1" DSID="T_OUT_RS1"  LOLVL="T_CUR_MIN" HILVL="T_CUR_MAX" >Температура наружной стенки (верхняя) в заданном диапазоне</DS>
+    <DS TYPE="RANGE" NAME="ST_TWR2" DSID="T_OUT_RS2"  LOLVL="T_CUR_MIN" HILVL="T_CUR_MAX" >Температура наружной стенки (средняя верхняя) в заданном диапазоне</DS>
+    <DS TYPE="RANGE" NAME="ST_TWR3" DSID="T_OUT_RS3"  LOLVL="T_CUR_MIN" HILVL="T_CUR_MAX" >Температура наружной стенки (средняя нижняя) в заданном диапазоне</DS>
+    <DS TYPE="RANGE" NAME="ST_TWR4" DSID="T_OUT_RS4"  LOLVL="T_CUR_MIN" HILVL="T_CUR_MAX" >Температура наружной стенки (нижняя) в заданном диапазоне</DS>
+    
+    <DS TYPE="OR" NAME="ST_TW0_CMP">
+        Прогрев внутренней стенки реактора закончен
+        <ITEM DSID="ST_TWR0"/>
+        <ITEM DSID="ST_TWGM0"/>    
+    </DS>
+    
+    <DS TYPE="OR" NAME="ST_TW1_CMP">
+        Прогрев наружной стенки (верхняя) реактора закончен
+        <ITEM DSID="ST_TWR1"/>
+        <ITEM DSID="ST_TWGM1"/>    
+    </DS>
+    
+     <DS TYPE="OR" NAME="ST_TW2_CMP">
+        Прогрев наружной стенки (средняя верхняя) реактора закончен
+        <ITEM DSID="ST_TWR2"/>
+        <ITEM DSID="ST_TWGM2"/>    
+    </DS>
+    
+     <DS TYPE="OR" NAME="ST_TW3_CMP">
+        Прогрев наружной стенки (средняя нижняя) реактора закончен
+        <ITEM DSID="ST_TWR3"/>
+        <ITEM DSID="ST_TWGM3"/>    
+    </DS>
+    
+    <DS TYPE="OR" NAME="ST_TW4_CMP">
+        Прогрев наружной стенки (нижняя) реактора закончен
+        <ITEM DSID="ST_TWR4"/>
+        <ITEM DSID="ST_TWGM4"/>    
+    </DS>
+    
+    
+    <DS TYPE="AVRG" NAME="T_WLS_AV4" COLOR="0x000FF0" UNITS="°C">
+        Средняя температура стенок реактора без учета нижней секции
+        <ITEM DSID="T_IN_WLS"/>
+        <ITEM DSID="T_OUT_RS1"/>
+        <ITEM DSID="T_OUT_RS2"/>
+        <ITEM DSID="T_OUT_RS3"/>        
+    </DS>
+    
+    <DS TYPE="AVRG" NAME="T_WLS_AV5" COLOR="0x000FF0" UNITS="°C">
+        Средняя температура стенок реактора
+        <ITEM DSID="T_IN_WLS"/>
+        <ITEM DSID="T_OUT_RS1"/>
+        <ITEM DSID="T_OUT_RS2"/>
+        <ITEM DSID="T_OUT_RS3"/>
+        <ITEM DSID="T_OUT_RS4"/>
+    </DS>
+    
+	<DS TYPE="OR" NAME="ST_HEAT0">
+		Флаг выключения ВН
+		<ITEM DSID="ST_TH0"/>
+		<ITEM DSID="ST_TW0"/>	
+	</DS>
+	<DS TYPE="OR" NAME="ST_HEAT1">
+		Флаг выключения НН (верхний ТЭН)
+		<ITEM DSID="ST_TH1"/>
+		<ITEM DSID="ST_TW1"/>	
+	</DS>
+	<DS TYPE="OR" NAME="ST_HEAT2">
+		Флаг выключения НН (средний верхний ТЭН)
+		<ITEM DSID="ST_TH2"/>
+		<ITEM DSID="ST_TW2"/>	
+	</DS>
+	<DS TYPE="OR" NAME="ST_HEAT3">
+		Флаг выключения НН (средний нижний ТЭН)
+		<ITEM DSID="ST_TH3"/>
+		<ITEM DSID="ST_TW3"/>	
+	</DS>
+	<DS TYPE="OR" NAME="ST_HEAT4">
+		Флаг выключения НН (нижний ТЭН)
+		<ITEM DSID="ST_TH4"/>
+		<ITEM DSID="ST_TW4"/>	
+	</DS>
+	   
+    <DS TYPE="AND" NAME="ST_CUR_HEAT_CMP5">
+      Достигнут заданный уровень прогрева с учетом всех участков реактора
+      <ITEM DSID="ST_TW0_CMP"/>
+      <ITEM DSID="ST_TW1_CMP"/>
+      <ITEM DSID="ST_TW2_CMP"/>
+      <ITEM DSID="ST_TW3_CMP"/>
+      <ITEM DSID="ST_TW4_CMP"/>
+    </DS>
+
+    <DS TYPE="AND" NAME="ST_CUR_HEAT_CMP4">
+      Достигнут заданный уровень прогрева без учета нижней части реактора
+      <ITEM DSID="ST_TW0_CMP"/>
+      <ITEM DSID="ST_TW1_CMP"/>
+      <ITEM DSID="ST_TW2_CMP"/>
+      <ITEM DSID="ST_TW3_CMP"/>      
+    </DS>
+    
+    <!--ОТОБРАЖЕНИЕ АНИМАЦИИ РАСХОДОВ-->
+    <!--ПРОПАН-БУТАН-->
+    <!--
+	<DS TYPE="LEVEL" NAME="ST_LPR" DSID="P_LPR" LVL="1.0">
+      Уровень давления жидкого пропан-бутана в норме
+    </DS>
+    -->
+	<DS TYPE="LEVEL" NAME="ST_GPR" DSID="P_GPR" GROWTH="0" LVL="0.8">
+      Уровень давления газообразного пропан-бутана в норме
+    </DS>
+	<DS TYPE="AND" NAME="ST_PR">
+      Уровень пропан-бутана в норме
+	  <!--<ITEM DSID="ST_LPR"/>-->
+	  <ITEM DSID="ST_GPR"/>
+    </DS>	
+	
+    <DS TYPE="AND" NAME="ST_PR_VALUE1">
+      <ITEM DSID="SW_VLV_BULK"/>  
+    </DS>
+    <DS TYPE="AND" NAME="ST_PR_VALUE2">
+      <ITEM DSID="SW_VLV_BULK"/>
+      <ITEM DSID="SW_VLV_REDUCTOR"/>
+    </DS>
+    <DS TYPE="AND" NAME="ST_PR_VALUE3">
+      <ITEM DSID="SW_VLV_BULK"/>
+      <ITEM DSID="SW_VLV_REDUCTOR"/>
+      <ITEM DSID="SW_VLV_PR_MS"/>
+    </DS>
+    <DS TYPE="AND" NAME="ST_PR_VALUE4">
+      <ITEM DSID="SW_VLV_BULK"/>
+      <ITEM DSID="SW_VLV_REDUCTOR"/>
+      <ITEM DSID="SW_VLV_PR_MA"/>
+    </DS>
+
+    <!--ТЕРМОСТАТ-->
+    <DS TYPE="LEVEL" NAME="ST_REDUCT" DSID="T_REDUCT" GROWTH="1" LVL="50.0">
+      Температура термостата в норме
+    </DS>
+    <!--ВОЗДУХ-->
+    <DS TYPE="LEVEL" NAME="ST_AIR_PRESS_CLEAN" DSID="P_AIR" GROWTH="1" LVL="8.0">
+      Уровень давления воздуха для удаления депозита в норме
+    </DS>
+    <DS TYPE="LEVEL" NAME="ST_AIR_PRESS_OXI" DSID="P_AIR" GROWTH="1" LVL="6.0">
+      Уровень давления воздуха для окисления в норме
+    </DS>
+    <DS TYPE="AND" NAME="ST_AIR_VALUE1">
+      <ITEM DSID="ST_AIR_PRESS_CLEAN"/>
+    </DS>
+    <DS TYPE="AND" NAME="ST_AIR_VALUE2">
+      <ITEM DSID="ST_AIR_PRESS_OXI"/>
+      <ITEM DSID="SW_VLV_AIR_MA"/>
+    </DS>
+
+    <!--АЗОТ-->
+    <DS TYPE="LEVEL" NAME="ST_NITRO_PRESS" DSID="P_NITRO" GROWTH="1" LVL="2.0">
+      Уровень давления азота в норме
+    </DS>
+    <DS TYPE="AND" NAME="ST_VLV_NITRO_RS">
+      Состояние клапана азота на продувку реактора
+      <ITEM DSID ="SW_VLV_NITRO_RS"/>
+    </DS>
+    <DS TYPE="AND" NAME="ST_VLV_NITRO_BLK">
+      Состояние клапана азота на продувку тары
+      <ITEM DSID ="SW_VLV_NITRO_BLK"/>
+    </DS>
+
+
+    <DS TYPE="AND" NAME="ST_NITRO_VALUE1">
+      <ITEM DSID="ST_NITRO_PRESS"/>
+    </DS>
+    <DS TYPE="AND" NAME="ST_NITRO_VALUE2">
+      <ITEM DSID="ST_NITRO_PRESS"/>
+      <ITEM DSID="ST_VLV_NITRO_RS"/>
+    </DS>
+    <DS TYPE="AND" NAME="ST_NITRO_VALUE3">
+      <ITEM DSID="ST_NITRO_PRESS"/>
+      <ITEM DSID="ST_VLV_NITRO_BLK"/>
+    </DS>
+
+    <!--СОСТОЯНИЕ ФЛАГОВ РАБОТЫ СКРИПТОВ-->
+	<!--
+    <DS TYPE="AND" NAME="ST_SCR_PRESTART"  TOSTR="Остановлен;Запущен">
+      Флаг скрипта предзапуска
+      <ITEM DSID="SW_AUTO_PRESTART"/>
+    </DS>
+    <DS TYPE="AND" NAME="ST_SCR_HCONTROL"  TOSTR="Остановлен;Запущен">
+      Флаг скрипта контроля температур нагревательных элементов
+      <ITEM DSID="SW_AUTO_HCONTROL"/>
+    </DS>
+    <DS TYPE="AND" NAME="ST_SCR_PREHEAT"   TOSTR="Остановлен;Запущен">
+      Флаг скрипта предварительного разогрева
+      <ITEM DSID="SW_AUTO_PREHEAT"/>
+    </DS>
+    <DS TYPE="AND" NAME="ST_SCR_PREHEATOXI" TOSTR="Остановлен;Запущен">
+      Флаг скрипта предварительного разогрева до температуры окисления
+      <ITEM DSID="SW_AUTO_PREHEATOXI"/>
+    </DS>
+    <DS TYPE="AND" NAME="ST_SCR_OXIDIZE"  TOSTR="Остановлен;Запущен" >
+      Флаг скрипта окисления
+      <ITEM DSID="SW_AUTO_OXIDIZE"/>
+    </DS>
+	
+    <DS TYPE="AND" NAME="ST_SCR_NITRO"    TOSTR="Остановлен;Запущен" >
+      Флаг скрипта продувки азотом
+      <ITEM DSID="SW_AUTO_NITRO"/>
+    </DS>
+	<DS TYPE="AND" NAME="ST_SCR_NITRO2"    TOSTR="Остановлен;Запущен" >
+      Флаг скрипта продувки азотом
+      <ITEM DSID="SW_AUTO_NITRO2"/>
+    </DS>
+    <DS TYPE="AND" NAME="ST_SCR_RESTORE"  TOSTR="Остановлен;Запущен" >
+      Флаг скрипта востановления поверхности
+      <ITEM DSID="SW_AUTO_RESTORE"/>
+    </DS>
+    <DS TYPE="AND" NAME="ST_SCR_SYNTHESIS" TOSTR="Остановлен;Запущен">
+      Флаг скрипта синтеза УНМ
+      <ITEM DSID="SW_AUTO_SYNTHESIS"/>
+    </DS>
+    <DS TYPE="AND" NAME="ST_SCR_CLEAN"     TOSTR="Остановлен;Запущен">
+      Флаг скрипта очистки реактора
+      <ITEM DSID="SW_AUTO_CLEAN"/>
+    </DS>
+    <DS TYPE="AND" NAME="ST_SCR_STOP"      TOSTR="Остановлен;Запущен">
+      Флаг скрипта остановки
+      <ITEM DSID="SW_AUTO_STOP"/>
+    </DS>
+    <DS TYPE="AND" NAME="ST_SCR_WORK"      TOSTR="Остановлен;Запущен">
+      Флаг скрипта основного алгоритма работы
+      <ITEM DSID="SW_AUTO_WORK"/>
+    </DS>
+	<DS TYPE="AND" NAME="ST_SCR_GLC"      TOSTR="Остановлен;Запущен">
+      Флаг скрипта управления зеленой лампой
+      <ITEM DSID="SW_AUTO_GREENLAMP"/>
+    </DS>
+	<DS TYPE="AND" NAME="ST_SCR_YLC"      TOSTR="Остановлен;Запущен">
+      Флаг скрипта управления желтой лампой
+      <ITEM DSID="SW_AUTO_YELLOWLAMP"/>
+    </DS>
+	<DS TYPE="AND" NAME="ST_SCR_RLC"      TOSTR="Остановлен;Запущен">
+      Флаг скрипта управления красной лампой
+      <ITEM DSID="SW_AUTO_REDLAMP"/>
+    </DS>
+	<DS TYPE="AND" NAME="ST_SCR_SOUND"      TOSTR="Остановлен;Запущен">
+      Флаг скрипта управления звуковой сигнализацией
+      <ITEM DSID="SW_AUTO_SOUND"/>
+    </DS>
+	<DS TYPE="AND" NAME="ST_SCR_THERMOSTAT"      TOSTR="Остановлен;Запущен">
+      Флаг скрипта управления термостатом
+      <ITEM DSID="SW_AUTO_THERMOSTAT"/>
+    </DS>
+	<DS TYPE="AND" NAME="ST_SCR_SDLISTEN"      TOSTR="Остановлен;Запущен">
+      Флаг скрипта прослушивания необходимости выключения компьютера
+      <ITEM DSID="SW_AUTO_SDLISTEN"/>
+    </DS>
+	<DS TYPE="AND" NAME="ST_SCR_PAUSELISTEN"      TOSTR="Остановлен;Запущен">
+      Флаг скрипта паузы работы
+      <ITEM DSID="SW_AUTO_PAUSELISTEN"/>
+    </DS>
+    <DS TYPE="AND" NAME="ST_SCR_OXIDIZE2"  TOSTR="Остановлен;Запущен" >
+      Флаг скрипта окисления
+      <ITEM DSID="SW_AUTO_OXIDIZE2"/>
+    </DS>
+	-->
+    
+		
+
+    <DS TYPE="OR" NAME="ST_HEATING" TOSTR="Завершен;Активен">    
+        <ITEM DSID="SW_SCR_PREHEAT"/>
+        <ITEM DSID="SW_SCR_PREHEATOXI"/>
+    </DS>
+    
+    <!-- ФЛАГИ ОТОБРАЖЕНИЯ СООБЩЕНИЙ -->
+    <DS TYPE="OR" NAME="ST_NITRO_MODE" >
+        <ITEM DSID="ST_SCR_NITRO"/>
+        <ITEM DSID="ST_SCR_NITRO2"/>
+    </DS>
+    <DS TYPE="AND" NAME="MSG_NITRO_PRESS">
+        Отображение сообщения о низком давлении азота
+        <ITEM DSID="ST_NITRO_PRESS" STATE="0"/>
+        <ITEM DSID="ST_NITRO_MODE"/>
+    </DS>
+    
+    <DS TYPE="AND" NAME="MSG_AIR_PRESS_OXI">
+        Отображение сообщения о низком давлении воздуха для режима окисления
+        <ITEM DSID="ST_AIR_PRESS_OXI" STATE="0"/>
+        <ITEM DSID="ST_SCR_OXIDIZE"/>
+    </DS>
+    
+    <DS TYPE="AND" NAME="MSG_AIR_PRESS_CLEAN">
+        Отображение сообщения о низком давлении воздуха для удаления депозита
+        <ITEM DSID="ST_AIR_PRESS_CLEAN" STATE="0"/>
+        <ITEM DSID="ST_SCR_CLEAN"/>
+    </DS>
+    
+    <DS TYPE="OR" NAME="ST_PROPANE_MODE" >
+        <ITEM DSID="ST_SCR_RESTORE"/>
+        <ITEM DSID="ST_SCR_SYNTHESIS"/>
+    </DS>
+    <DS TYPE="AND" NAME="MSG_PROPANE_PRESS">
+        Отображение сообщения о низком давлении пропан-бутан
+        <ITEM DSID="ST_PR" STATE="0"/>
+        <ITEM DSID="ST_PROPANE_MODE"/>
+    </DS>
+    <DS TYPE="AND" NAME="MSG_PROPANE_TEMP">
+        Отображение сообщения о низком температуре в редукторе-испарителе
+        <ITEM DSID="ST_REDUCT" STATE="0"/>
+        <ITEM DSID="ST_PROPANE_MODE"/>
+    </DS>
+    
+	
+	<!--FLOWCONTROLLER-->
+	<!--
+    <DS TYPE="AnalogInputDataPoint" DEV="MFCP" WIRE="0" NAME="MFC_P" COLOR="0xFBAD82" FMT="%-3.2f" UNITS="атм" >
+      Давление пропан-бутана на входе 
+      <CONVERT CONVID = "PSIAtoAtm"/>
+    </DS>
+	
+
+    <DS TYPE="AnalogInputDataPoint" DEV="MFCP" WIRE="1" NAME="MFC_T" COLOR="0xFBAD82" FMT="%-3.1f" UNITS="°C">
+		Температура воздуха на входе
+	</DS>
+
+    <DS TYPE="AnalogInputDataPoint" DEV="MFCP" WIRE="3" NAME="MFC_G_GOT" COLOR="0xFBAD82" FMT="%-3.1f" UNITS="л/мин">
+      Измеренный расход пропан-бутана      
+    </DS>
+
+    <DS TYPE="AnalogInputDataPoint" DEV="MFCP" WIRE="4" NAME="MFC_G_DEF" COLOR="0xCC3300" FMT="%-3.1f" UNITS="л/мин">
+      Расход  пропан-бутана (заданный)     
+    </DS>
+
+    <DS TYPE ="AnalogOutputDataPoint" DEV ="MFCP"  NAME="MFC_G_SET" WIRE="0"  COLOR="0xCC3300" FMT="%-3.2f" UNITS="л/мин" MINV ="0" MAXV="5.0">
+      Расход пропан-бутана в реакторе синтеза      
+    </DS>
+	-->
+    <!--FLOWCONTROLLER-->
+    
+    <!--ПАДЕНИЕ ТЕМПЕРАТУРЫ РЕДУКТОРА-->
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_TREDUCT_DROP" WIRE="55">Сигнал падения температуры термостата</DS>    
+    
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_SCR_CALIBRATE" WIRE="56">Флаг скрипта калибровки</DS>    
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_AUTO_CALIBRATE" WIRE="57">Автоматический флаг скрипта калибровки</DS> 
+    
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_SCR_SBURN" WIRE="58">Флаг скрипта отжига скребка</DS>    
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_AUTO_SBURN" WIRE="59">Автоматический флаг скрипта отжига скребка</DS>    
+    
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_SCR_OXIDIZE2" WIRE="60">Флаг скрипта перезапролнения цилиндра скребка</DS>    
+    <DS TYPE="DiscreteOutputDataPoint" DEV="A0" NAME="SW_AUTO_OXIDIZE2" WIRE="61">Автоматический флаг скрипта перезапролнения цилиндра скребка</DS>    
+    
+    
+	
+  </DATASOURCES>
+
+  <!--РЕГИСТРАЦИЯ ТАЙМЕРОВ СОБЫТИЙ -->
+  <TIMERS>
+  
+    <TIMER NAME="TIMER_HEAT"       TYPE="TIMER" STARTDS="ST_HEATING:1"      STOPDS="ST_HEATING:0"  FMT="%H:%M:%S"/>
+    <TIMER NAME="TIMER_OXIDIZE"    TYPE="TIMER" STARTDS="SW_SCR_OXIDIZE:1"  STOPDS="SW_SCR_OXIDIZE:0"  FMT="%H:%M:%S" DURATION="DUR_OXI"/>
+    <TIMER NAME="TIMER_OXIDIZE2"   TYPE="TIMER" STARTDS="SW_SCR_OXIDIZE2:1"  STOPDS="SW_SCR_OXIDIZE2:0"  FMT="%H:%M:%S" DURATION="DUR_OXI2"/>
+    <TIMER NAME="TIMER_NITRO01"    TYPE="TIMER" STARTDS="SW_SCR_NITRO:1"    STOPDS="SW_SCR_NITRO:0"    FMT="%H:%M:%S" DURATION="DUR_NITRO"/>
+	<TIMER NAME="TIMER_NITRO02"    TYPE="TIMER" STARTDS="SW_SCR_NITRO2:1"   STOPDS="SW_SCR_NITRO2:0"    FMT="%H:%M:%S" DURATION="DUR_NITRO"/>
+    <TIMER NAME="TIMER_RESTORE"    TYPE="TIMER" STARTDS="SW_SCR_RESTORE:1"  STOPDS="SW_SCR_RESTORE:0"  FMT="%H:%M:%S" DURATION="DUR_REST"/>
+    <TIMER NAME="TIMER_SYNTHESIS"  TYPE="TIMER" STARTDS="SW_SCR_SYNTHESIS:1" STOPDS="SW_SCR_SYNTHESIS:0"   FMT="%H:%M:%S" DURATION="DUR_SYNT"/>
+	<TIMER NAME="TIMER_CLEAN"  	   TYPE="TIMER" STARTDS="SW_SCR_CLEAN:1" 	 STOPDS="SW_SCR_CLEAN:0"     	FMT="%M:%S"/>
+
+  </TIMERS>
+
+  <!--РЕГИСТРАЦИЯ СТОРОЖЕВЫХ ОБЪЕКТОВ -->
+  <WATCHDOGS>
+    
+    <WATCHDOG TYPE="WDDiscreteOutputDataPoint"   NAME="WD_POWER_LOW"     LDS="ST_UACC"            LSTATE="1"> 
+        <ITEM DSID="SW_SYSTEM_SHUTDOWN" STATE="1"/>
+    </WATCHDOG>
+    
+    <WATCHDOG TYPE="WDSHUTDOWN" NAME="WD_SYS_SHUTDOWN" LDS="SW_SYSTEM_SHUTDOWN" LSTATE="1" SYSTEM="1"/> 
+    
+  </WATCHDOGS>
+
+  <!--РЕГИСТРАЦИЯ OBA-скриптов -->
+  <SCRIPTS>
+
+    <SCRIPT NAME="PRESTART"    PATH="prestart.bas"  AUTOSTART="0" DSID="SW_AUTO_PRESTART"/>
+    <SCRIPT NAME="SNDCONTROL"  PATH="sound.bas"     AUTOSTART="0" DSID="SW_AUTO_SOUND"/>
+	<SCRIPT NAME="GLCONTROL"   PATH="lampgreen.bas" AUTOSTART="0" DSID="SW_AUTO_GREENLAMP"/>
+	<SCRIPT NAME="YLCONTROL"   PATH="lampyellow.bas" AUTOSTART="0" DSID="SW_AUTO_YELLOWLAMP"/>
+	<SCRIPT NAME="RLCONTROL"   PATH="lampred.bas" AUTOSTART="0" DSID="SW_AUTO_REDLAMP"/>
+    <SCRIPT NAME="HCONTROL"    PATH="heatcontrol.bas" AUTOSTART="0" DSID="SW_AUTO_HCONTROL"/>
+    <SCRIPT NAME="PREHEAT"     PATH="preheat.bas"  DSID="SW_AUTO_PREHEAT"/>
+    <SCRIPT NAME="PREHEATOXI"  PATH="preheat2.bas" DSID="SW_AUTO_PREHEATOXI"/>
+    <SCRIPT NAME="OXIDIZE"     PATH="oxidize.bas" DSID="SW_AUTO_OXIDIZE"/>
+    <SCRIPT NAME="OXIDIZE2"    PATH="oxidize2.bas" DSID="SW_AUTO_OXIDIZE2"/>
+    <SCRIPT NAME="NITRO"       PATH="nitro.bas" DSID="SW_AUTO_NITRO"/>
+	<SCRIPT NAME="NITRO2"      PATH="nitro2.bas" DSID="SW_AUTO_NITRO2"/>
+    <SCRIPT NAME="RESTORE"     PATH="restore.bas" DSID="SW_AUTO_RESTORE"/>
+    <SCRIPT NAME="SYNTHESIS"   PATH="synthesis.bas" DSID="SW_AUTO_SYNTHESIS"/>
+    <SCRIPT NAME="CLEAN"       PATH="clean.bas" DSID="SW_AUTO_CLEAN"/>
+    <SCRIPT NAME="STOP"        PATH="stop.bas" DSID="SW_AUTO_STOP"/>
+    <SCRIPT NAME="WORK"        PATH="work.bas" AUTOSTART="1" DSID="SW_AUTO_WORK"/>
+    <SCRIPT NAME="SDLISTEN"    PATH="sdlisten.bas" AUTOSTART="0" DSID="SW_AUTO_SDLISTEN"/>   
+    <SCRIPT NAME="PAUSELISTEN" PATH="pauselisten.bas" AUTOSTART="0" DSID="SW_AUTO_PAUSELISTEN"/> 
+	<SCRIPT NAME="THERMOSTAT"  PATH="thermostat.bas" AUTOSTART="0" DSID="SW_AUTO_THERMOSTAT"/> 
+    <SCRIPT NAME="SLEEP"       PATH="Sleep.bas" DSID="SW_AUTO_SLEEP"/> 	
+    <SCRIPT NAME="CALIBRATE"   PATH="calibrate.bas" AUTOSTART="0" DSID="SW_AUTO_CALIBRATE"/> 
+    <SCRIPT NAME="SBURN"      PATH="sburn.bas" AUTOSTART="0" DSID="SW_AUTO_SBURN"/> 
+	    
+
+  </SCRIPTS>
+
+ 
+  <ONSTART>
+    
+    <SCRIPT NAME="WORK"/>    
+    
+  </ONSTART>
+   
+  
+  <!-- Настройка интерфейса-->
+  <WORKSPACE>
+
+    <!-- Настройка файлы результатов измерений 
+            полное имя  = DIR+ID+DAY+MONTH+YEAR.FILEEXT
+            разделение данных - SEPARATOR
+            очистка старых данных из файла - APPEND
+            интервал записи - WRITEINTERVAL="3000"
+            относительная шкала времени - TIMEUNITS = "SECONDS" - секунды
+                                          TIMEUNITS = "MINUTES" - минуты
+                                          TIMEUNITS = "HOURS" - часы   
+            ITEM DSID="T_R1" - идентификатор источника данных (выводятся в порядке добавления)
+    -->
+
+    <DATALOGER ID="MOD3" WRITEINTERVAL="5000"  FILEEXT="csv" SEPARATOR=";" APPEND="1" TIMEUNITS="MINUTES">
+
+      <!--Блок управления нагревателями БУН1 модуль 1
+      <ITEM DSID="TRC_SET_M1" LISTEN="1"/>
+      <ITEM DSID="ST_RCH_M1"/>
+      <ITEM DSID="TRC_GET_M1"/>-->
+
+    </DATALOGER>
+
+
+
+    <SCHEMA NAME="SERVICE" CONFIGFILE="service.xml"/>
+    <SCHEMA NAME="MAnalogInputDataPoint" CONFIGFILE="main.xml"/>
+
+    <!-- Настройка групп пользовательского отображения данных-->
+    
+    <GROUPS>
+ 
+      <GROUP TITLE="Температуры" BKCOLOR = "0xFDE9D9" ICON="">
+        
+        <ITEM DSID="T_IN_WLS"/>
+		<ITEM DSID="T_OUT_RS1"/>   
+		<ITEM DSID="T_OUT_RS2"/>   
+		<ITEM DSID="T_OUT_RS3"/>   
+		<ITEM DSID="T_OUT_RS4"/>
+		
+		<ITEM DSID="T_IN_HT"/>
+		<ITEM DSID="T_OUT_HT1"/>   
+		<ITEM DSID="T_OUT_HT2"/>   
+		<ITEM DSID="T_OUT_HT3"/>   
+		<ITEM DSID="T_OUT_HT4"/>
+		
+       </GROUP>
+	  
+	<GROUP TITLE="Давления" BKCOLOR = "0xFDE9D9" ICON="">
+        
+        <ITEM DSID="P_AIR"/>
+		<ITEM DSID="P_NITRO"/>
+		<ITEM DSID="P_GPR"/>   
+		<ITEM DSID="P_LPR"/>   
+		<ITEM DSID="P_RS"/>   
+    </GROUP>	  
+	   
+	   
+       
+          
+    </GROUPS>
+  
+
+  </WORKSPACE> 
+
+</NTCCPROJECT>

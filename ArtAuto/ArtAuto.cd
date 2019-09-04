@@ -1,0 +1,316 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="ArtAuto.Devices.MeassureRangeInfo" Collapsed="true">
+    <Position X="16.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAggEAAAAAAAAQAAAAAAAAAEAAAAAAAAAA=</HashCode>
+      <FileName>Devices\MeassureRangeInfo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ArtAuto.Devices.BaseDevice" Collapsed="true">
+    <Position X="9.75" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAwAAAAAEAgAAwAAQAAACIAAAAQAAACAAAgAAAAAAAA=</HashCode>
+      <FileName>Devices\BaseDevice.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ArtAuto.Devices.AnalogInput" Collapsed="true">
+    <Position X="12.25" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAEAAAAAAAAAAAAQAAAAAAAAAAAIAAgAAAAAAA=</HashCode>
+      <FileName>Devices\AnalogInput.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ArtAuto.Devices.AnalogOutput" Collapsed="true">
+    <Position X="14.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAIAAgAAAAAAA=</HashCode>
+      <FileName>Devices\AnalogOutput.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ArtAuto.Devices.DiscreteInput" Collapsed="true">
+    <Position X="18.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAEAQAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Devices\DiscreteInput.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ArtAuto.Devices.DiscreteOutput" Collapsed="true">
+    <Position X="14.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAEAQAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Devices\DiscreteOutput.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ArtAuto.Devices.Channel" Collapsed="true">
+    <Position X="12.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAA=</HashCode>
+      <FileName>Devices\Channel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ArtAuto.Common.TimedControl" Collapsed="true">
+    <Position X="9.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAAIACAAIAAAQIAAAACAAAAQAAAIIAAIAAQAAAA=</HashCode>
+      <FileName>Common\TimedControl.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ArtAuto.Common.ArtAutoXmlExceptions" Collapsed="true">
+    <Position X="45.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Common\ArtAutoExceptions.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ArtAuto.Common.NamedObject" Collapsed="true">
+    <Position X="9.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAQgAAAAIAAAAARAgAAEAABAAAAEAAAAAAA=</HashCode>
+      <FileName>Common\NamedObject.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ArtAuto.Common.XmlObjectsFactory" Collapsed="true">
+    <Position X="45.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAEABAAAAA=</HashCode>
+      <FileName>Common\ObjectsFactory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ArtAuto.Common.Project" Collapsed="true">
+    <Position X="22.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABA=</HashCode>
+      <FileName>Common\Project.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ArtAuto.Converters.BaseConverter" Collapsed="true">
+    <Position X="38.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAACgAAAAAAAAEAAAAAEA=</HashCode>
+      <FileName>Converters\BaseConverter.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ArtAuto.Converters.FormulaConverter" Collapsed="true">
+    <Position X="43" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAgAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Converters\FormulaConverter.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ArtAuto.Converters.LinearConverter" Collapsed="true">
+    <Position X="34" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEAIAAAAAAAAgAAAAAAAAEAIEAAAA=</HashCode>
+      <FileName>Converters\LinearConverter.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ArtAuto.Converters.MultiRangeConverter" Collapsed="true">
+    <Position X="36.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAgAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Converters\MultiRangeConverter.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ArtAuto.Converters.PolynomialConverter" Collapsed="true">
+    <Position X="38.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAgAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Converters\PolynomialConverter.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ArtAuto.Converters.PolynomialNegativeConverter" Collapsed="true">
+    <Position X="38.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAgAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Converters\PolynomialNegativeConverter.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ArtAuto.Converters.TableConverter" Collapsed="true">
+    <Position X="40.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAgAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Converters\TableConverter.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ArtAuto.Data.AnalogDataPoint" Collapsed="true">
+    <Position X="22.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAIQIAAAEAAkAAAAgAA=</HashCode>
+      <FileName>Data\AnalogDataPoint.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ArtAuto.Data.AnalogInputDataPoint" Collapsed="true">
+    <Position X="24.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAgAAAAAAQ=</HashCode>
+      <FileName>Data\AnalogInputDataPoint.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ArtAuto.Data.AnalogOutputDataPoint" Collapsed="true">
+    <Position X="20.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAgAAAAAAQ=</HashCode>
+      <FileName>Data\AnalogOutputDataPoint.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ArtAuto.Data.DataPoint" Collapsed="true">
+    <Position X="26" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAMAAAAAAA=</HashCode>
+      <FileName>Data\BaseDataPoint.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ArtAuto.Data.CompositeAnalogDataPoint" Collapsed="true">
+    <Position X="22.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAEAAAAAAAAAAAAAAABAQAAAIAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>Data\CompositeAnalogDataPoint.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ArtAuto.Data.CompositeDiscreteDataPoint" Collapsed="true">
+    <Position X="31.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAEAAAAAAAAAAAAAAABAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Data\CompositeDiscreteDataPoint.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ArtAuto.Data.DataPointsDictionary" Collapsed="true">
+    <Position X="47.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Data\DataPoints.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ArtAuto.Data.DiscreteDataPoint" Collapsed="true">
+    <Position X="29.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Data\DiscreteDataPoint.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ArtAuto.Data.DiscreteInputDataPoint" Collapsed="true">
+    <Position X="27" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQ=</HashCode>
+      <FileName>Data\DiscreteInputDataPoint.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ArtAuto.Data.DiscreteOutputDataPoint" Collapsed="true">
+    <Position X="29.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQ=</HashCode>
+      <FileName>Data\DiscreteOutputDataPoint.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ArtAuto.Devices.ADAM6000.Adam6000Base" Collapsed="true">
+    <Position X="9.25" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAUAAQAAAAgAAICAKAQAAQAIAAAAAEAAAAA=</HashCode>
+      <FileName>Devices\ADAM6000\Adam6000Base.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ArtAuto.Devices.ADAM6000.Adam6015" Collapsed="true">
+    <Position X="0.5" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAACgAEAAAAQAAAAQAAAAAAAAQAABAAAAAIAAAAAA=</HashCode>
+      <FileName>Devices\ADAM6000\Adam6015.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ArtAuto.Devices.ADAM6000.Adam6017" Collapsed="true">
+    <Position X="0.5" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAACgAEAAAAQAAAAQAAAAAAAAQAABAAAAAIAAAAAA=</HashCode>
+      <FileName>Devices\ADAM6000\Adam6017.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ArtAuto.Devices.ADAM6000.Adam6018" Collapsed="true">
+    <Position X="0.5" Y="11" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAACgAEAAAAQAAAAQAAAAAAAAQAABAAAAAIAAAAAA=</HashCode>
+      <FileName>Devices\ADAM6000\Adam6018.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ArtAuto.Devices.ADAM6000.Adam6024" Collapsed="true">
+    <Position X="0.5" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAACgAEAAAAQAAAAQAABAAAQAQAABAAACAIAAAAAE=</HashCode>
+      <FileName>Devices\ADAM6000\Adam6024.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ArtAuto.Devices.ADAM6000.Adam6052" Collapsed="true">
+    <Position X="0.5" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAACgAEAAAAQAAAAAAABAAAAAQAAAAAAAAIAAAAAA=</HashCode>
+      <FileName>Devices\ADAM6000\Adam6052.cs</FileName>
+      <NewMemberFileName>Devices\ADAM6000\Adam6050.cs</NewMemberFileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ArtAuto.Devices.ADAM6000.Adam6066" Collapsed="true">
+    <Position X="0.5" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAACgAEAAAAQAAAAAAABAAAAAQAAAAAAAAIAAAAAA=</HashCode>
+      <FileName>Devices\ADAM6000\Adam6066.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ArtAuto.Devices.Various.TDKLabdaPowerSource" Collapsed="true">
+    <Position X="17" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAACgAEAEAAQQAAAQAAIAAAQAAAABAAACAIAAAAAE=</HashCode>
+      <FileName>Devices\Various\TDKLabdaPowerSource.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Interface Name="ArtAuto.Devices.IAnalogInputDevice" Collapsed="true">
+    <Position X="14.75" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAQAAAAAAAAAAABAAAAAAAAAAAA=</HashCode>
+      <FileName>Devices\IAnalogInputDevice.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ArtAuto.Devices.IAnalogOutputDevice" Collapsed="true">
+    <Position X="16.5" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAACAAAAAAAE=</HashCode>
+      <FileName>Devices\IAnalogOutputDevice.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ArtAuto.Devices.IDiscreteInputDevice" Collapsed="true">
+    <Position X="18.25" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAABAAAAAQAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Devices\IDiscreteInputDevice.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ArtAuto.Devices.IDiscreteOutputDevice" Collapsed="true">
+    <Position X="14.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAACgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAA=</HashCode>
+      <FileName>Devices\IDiscreteOutputDevice.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ArtAuto.Data.ICompositeDataPoint" Collapsed="true">
+    <Position X="45.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAAAAAAAAAABAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Data\CompositeDataPoint.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Delegate Name="ArtAuto.Common.CreateDataPoint" Collapsed="true">
+    <Position X="45.5" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAA=</HashCode>
+      <FileName>Common\ObjectsFactory.cs</FileName>
+    </TypeIdentifier>
+  </Delegate>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
